@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="app_name">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="fontFamily">YS Display</item>
+    </style>
+    <style name="button_text">
+        <item name="android:textColor">#1A1B22</item>
+        <item name="android:textSize">26sp</item>
+        <item name="fontFamily">YS Display</item>
+    </style>
+
+</resources>
