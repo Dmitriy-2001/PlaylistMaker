@@ -11,5 +11,11 @@
         <item name="android:textSize">26sp</item>
         <item name="fontFamily">YS Display</item>
     </style>
+    <style name="button">
+        <item name="backgroundColor">@color/white</item>
+        <item name="android:textColor">@color/blackYP</item>
+        <item name="android:textSize">26sp</item>
+        <item name="font">YS Display</item>
+    </style>
 
 </resources>
