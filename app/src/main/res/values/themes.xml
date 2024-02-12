@@ -3,11 +3,21 @@
     <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:textColorPrimary">@color/black</item> <!-- Цвет текста -->
+        <item name="android:textColorSecondary">@color/black</item> <!-- Цвет иконок -->
+
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
     <style name="graySwitch">
         <item name="thumbTint">@color/gray</item>
         <item name="trackTint">@color/light_grey</item>
+    </style>
+
+    <style name="MyToolbarStyle" parent="Widget.Material3.Toolbar">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="titleTextColor">@color/white</item>
     </style>
 </resources>
