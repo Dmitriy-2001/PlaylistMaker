@@ -12,6 +12,20 @@
         <item name="titleTextColor">@color/white</item>
         <item name="textColor">@color/white</item>
         <item name="iconTint">@color/white</item>
+        <item name="android:colorPrimaryDark">@color/blackYP</item>
+    </style>
+
+    <style name="Settings" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:colorPrimary">@color/blackYP</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:iconTint">@color/white</item>
+        <item name="textColor">@color/white</item>
+        <item name="tint">@color/white</item>
 
     </style>
+
+
+
+
+
 </resources>

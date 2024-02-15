@@ -28,15 +28,5 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Определите фон для темной темы -->
-        <item name="android:toolbarStyle">@style/ToolbarStyle</item>
-    </style>
-
-    <style name="ToolbarStyle" parent="Widget.AppCompat.Toolbar">
-        <!-- Для темной темы -->
-        <item name="android:background">@color/blackYP</item>
-
-    </style>
 
 </resources>
