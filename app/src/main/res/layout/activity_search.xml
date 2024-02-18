@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@style/Search">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/search"
+        app:navigationIcon="@drawable/arrow_back"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginStart="@dimen/medium_padding"
+        android:layout_marginTop="@dimen/large_padding"
+        android:layout_marginEnd="@dimen/medium_padding"
+        android:background="@drawable/search_field"
+        android:orientation="horizontal"
+       >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="13dp"
+            android:src="@drawable/search"
+            app:iconPadding="11dp"
+            style="@style/search_form"
+            />
+
+        <EditText
+            android:id="@+id/search_form"
+            style="@style/search_form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="9dp"
+            android:layout_marginEnd="9dp"
+            android:layout_weight="1"
+            tools:ignore="TouchTargetSizeCheck"
+            android:gravity="center_vertical"
+            android:hint="@string/search"
+            android:inputType="text"
+            android:lines="1"
+            android:padding="8dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="32dp"
+            android:textFontWeight="400"
+
+             />
+
+        <ImageView
+            android:id="@+id/clearButton"
+            style="@style/search_form"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center|end"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_close"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+</LinearLayout>

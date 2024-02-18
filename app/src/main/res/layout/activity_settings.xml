@@ -2,11 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
     android:theme="@style/Settings"
 
     >
@@ -15,15 +13,8 @@
         android:id="@+id/settings_back_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         app:title="@string/settings"
-
         app:navigationIcon="@drawable/arrow_back"
-
-        android:theme="@style/Settings"
-
-
-
         />
 
     <LinearLayout
@@ -32,10 +23,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginTop="24dp"
-        android:theme="@style/Settings">
-
-
-
+       >
 
             <Switch
                 android:id="@+id/switchDarkTheme"
@@ -48,11 +36,7 @@
                 android:text="@string/dark_theme"
                 android:textSize="@dimen/text"
                 android:layout_gravity="end|center_vertical"
-
-
-
                 />
-
 
 
         <FrameLayout
@@ -69,8 +53,7 @@
                 android:textSize="@dimen/text"
                 android:gravity="center"
                 android:layout_marginStart="@dimen/medium_padding"
-
-
+                style="@style/Settings"
                />
 
             <ImageView
@@ -79,7 +62,6 @@
                 android:src="@drawable/share"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/medium_padding"
-
                 />
         </FrameLayout>
         <FrameLayout
@@ -93,10 +75,10 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:text="@string/write_to_support"
-
                 android:textSize="@dimen/text"
                 android:gravity="center"
-                android:layout_marginStart="@dimen/medium_padding"/>
+                android:layout_marginStart="@dimen/medium_padding"
+                style="@style/Settings"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -104,7 +86,6 @@
                 android:src="@drawable/support"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/medium_padding"/>
-
         </FrameLayout>
 
         <FrameLayout
@@ -118,10 +99,10 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:text="@string/user_agreement"
-
                 android:textSize="@dimen/text"
                 android:gravity="center"
-                android:layout_marginStart="@dimen/medium_padding"/>
+                android:layout_marginStart="@dimen/medium_padding"
+                style="@style/Settings"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -129,7 +110,6 @@
                 android:src="@drawable/arrow_forward"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/medium_padding"/>
-
 
         </FrameLayout>
 

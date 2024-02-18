@@ -28,5 +28,16 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
     </style>
 
+    <style name="search_form">
+        <item name="tint">@color/gray</item>
+        <item name="android:textColorHint">@color/gray</item>
+        <item name="android:backgroundTint">@color/light_grey</item>
+        <item name="android:textColor">@color/blackYP</item>
+        <item name="android:drawableTint">@color/gray</item>
+        <item name="android:textSize">@dimen/text</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+
+
+    </style>
 
 </resources>

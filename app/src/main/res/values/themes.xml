@@ -11,9 +11,19 @@
 
     </style>
 
+    <style name="Main" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:background">@color/blue</item>
+    </style>
+
     <style name="Settings" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:colorPrimary">@color/white</item>
         <item name="colorOnPrimary">@color/black</item>
+        <item name="textColor">@color/black</item>
+    </style>
+
+    <style name="Search" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:colorPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/blackYP</item>
         <item name="textColor">@color/black</item>
     </style>
 

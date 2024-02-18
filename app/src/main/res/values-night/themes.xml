@@ -15,15 +15,31 @@
         <item name="android:colorPrimaryDark">@color/blackYP</item>
     </style>
 
+    <style name="Main">
+        <item name="android:background">@color/blackYP</item>
+    </style>
+
     <style name="Settings" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:colorPrimary">@color/blackYP</item>
+        <item name="android:background">@color/blackYP</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="android:iconTint">@color/white</item>
         <item name="textColor">@color/white</item>
         <item name="tint">@color/white</item>
-
     </style>
 
+
+    <style name="Search" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:colorPrimary">@color/blackYP</item>
+        <item name="android:background">@color/blackYP</item>
+        <item name="android:textColor">@color/blackYP</item>
+        <item name="colorOnPrimary">@color/blackYP</item>
+        <item name="android:textColorHint">@color/blackYP</item>
+        <item name="android:iconTint">@color/white</item>
+        <item name="tint">@color/white</item>
+        <item name="android:textCursorDrawable">@null</item>
+
+    </style>
 
 
 
