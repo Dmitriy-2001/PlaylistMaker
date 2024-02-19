@@ -31,17 +31,21 @@
 
     <style name="Search" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:colorPrimary">@color/blackYP</item>
-        <item name="android:background">@color/blackYP</item>
-        <item name="android:textColor">@color/blackYP</item>
-        <item name="colorOnPrimary">@color/blackYP</item>
-        <item name="android:textColorHint">@color/blackYP</item>
-        <item name="android:iconTint">@color/white</item>
-        <item name="tint">@color/white</item>
-        <item name="android:textCursorDrawable">@null</item>
-
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/blackYP</item> <!-- Цвет фона всего экрана при темной теме -->
+        <item name="editTextStyle">@style/SearchEditText.Dark</item> <!-- Используется стиль для поля ввода при темной теме -->
+        <item name="searchFieldBackground">@drawable/rounded_edit_text_dark</item> <!-- Используется файл формы для темной темы -->
+        <item name="searchIconTint">@color/white</item> <!-- Цвет иконок для темной темы -->
+        <item name="searchTextColor">@color/white</item> <!-- Цвет текста в поле поиска для темной темы -->
+        <item name="searchHintTextColor">@color/white</item> <!-- Цвет подсказки в поле поиска для темной темы -->
     </style>
 
 
+<style name="search_form" parent="Theme.Material3.DayNight.NoActionBar">
+    <item name="android:background">@color/white</item>
+<item name="android:iconTint">@color/blackYP</item>
+</style>
 
 
 </resources>

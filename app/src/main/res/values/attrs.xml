@@ -2,5 +2,10 @@
 <resources>
     <attr name="textColor" format="color" />
     <attr name="iconTint" format="color" />
+  <attr name="android:background" format="color" />
+    <attr name="searchFieldBackground" format="reference|color" />
+    <attr name="searchIconTint" format="reference|color" />
+    <attr name="searchTextColor" format="reference|color" />
+    <attr name="searchHintTextColor" format="reference|color" />
 
 </resources>

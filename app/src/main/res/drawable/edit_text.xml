@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/edit_text.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/light_grey"/> <!-- цвет фона -->
+    <corners android:radius="16dp"/>  <!-- Радиус закругления углов -->
+    <size
+        android:width="328dp"
+        android:height="36dp"
+        android:viewportWidth="328"
+        android:viewportHeight="36"
+    />
+</shape>

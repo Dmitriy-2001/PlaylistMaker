@@ -40,4 +40,20 @@
 
     </style>
 
+    <!-- Стиль для поля ввода при светлой теме -->
+    <style name="SearchEditText.Light" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/edit_text</item> <!-- Файл формы для светлой темы -->
+         <!-- Цвет подсказки -->
+        <item name="android:textColor">@color/blackYP</item> <!-- Цвет текста -->
+        <item name="android:tint">@color/gray</item> <!-- Цвет иконок -->
+    </style>
+
+
+    <!-- Стиль для поля ввода при темной теме -->
+    <style name="SearchEditText.Dark" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/edit_text_dark</item> <!-- Файл формы для темной темы -->
+         <!-- Цвет подсказки -->
+        <item name="android:textColor">@color/white</item> <!-- Цвет текста -->
+        <item name="android:tint">@color/white</item> <!-- Цвет иконок -->
+    </style>
 </resources>
