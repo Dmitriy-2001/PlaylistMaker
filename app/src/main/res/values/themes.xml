@@ -24,24 +24,15 @@
     <style name="Search" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:colorPrimary">@color/white</item>
         <item name="colorOnPrimary">@color/blackYP</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/blackYP</item>
         <item name="android:background">@color/white</item> <!-- Цвет фона всего экрана при светлой теме -->
-        <item name="editTextStyle">@style/SearchEditText.Light</item> <!-- Используется стиль для поля ввода при светлой теме -->
-        <item name="searchFieldBackground">@drawable/edit_text</item> <!-- Используется файл формы для светлой темы -->
+         <!-- Используется стиль для поля ввода при светлой теме -->
+        <item name="searchFieldBackground">@color/light_grey</item> <!-- Используется файл формы для светлой темы -->
         <item name="searchIconTint">@color/gray</item> <!-- Цвет иконок для светлой темы -->
         <item name="searchTextColor">@color/blackYP</item> <!-- Цвет текста в поле поиска для светлой темы -->
         <item name="searchHintTextColor">@color/gray</item> <!-- Цвет подсказки в поле поиска для светлой темы -->
+
     </style>
-
-
-
-    <style name="search_form" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:background">@color/light_grey</item>
-        <item name="android:iconTint">@color/gray</item>
-        <item name="android:textColorHint">@color/gray</item>
-    </style>
-
-
 
 
 </resources>

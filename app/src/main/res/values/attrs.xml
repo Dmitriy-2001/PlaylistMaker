@@ -7,5 +7,6 @@
     <attr name="searchIconTint" format="reference|color" />
     <attr name="searchTextColor" format="reference|color" />
     <attr name="searchHintTextColor" format="reference|color" />
+     />
 
 </resources>

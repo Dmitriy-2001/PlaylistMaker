@@ -13,51 +13,56 @@
         android:layout_height="wrap_content"
         app:title="@string/search"
         app:navigationIcon="@drawable/arrow_back"
+
         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium_padding"
-        android:layout_marginTop="@dimen/large_padding"
-        android:layout_marginEnd="@dimen/medium_padding"
-        android:orientation="horizontal">
+        android:background="@drawable/edit_text"
+    android:layout_marginStart="@dimen/medium_padding"
+    android:layout_marginTop="@dimen/large_padding"
+    android:layout_marginEnd="@dimen/medium_padding"
+    android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/search"
-            android:padding="8dp"
-            app:tint="?attr/searchIconTint"  <!-- Добавлено использование атрибута tint для иконки поиска -->
-        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/search"
+        android:padding="8dp"
+        app:tint="?attr/searchIconTint"
+        android:background="@android:color/transparent"/>
 
-        <EditText
-            android:id="@+id/search_form"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:hint="@string/search"
-            android:inputType="text"
-            android:paddingStart="12dp"
-            android:paddingEnd="32dp"
-            android:textColor="?attr/searchTextColor" <!-- Добавлено использование атрибута textColor для текста в поле поиска -->
-        android:textColorHint="?attr/searchHintTextColor" <!-- Добавлено использование атрибута textColorHint для подсказки в поле поиска -->
-        android:background="?attr/searchFieldBackground" <!-- Добавлено использование атрибута background для фона поля поиска -->
-        />
+    <EditText
+        android:id="@+id/search_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:hint="@string/search"
+        android:inputType="text"
+        android:paddingStart="12dp"
+        android:paddingEnd="32dp"
 
-        <ImageView
-            android:id="@+id/clearButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_close"
-            android:padding="8dp"
-            app:tint="?attr/searchIconTint" <!-- Добавлено использование атрибута tint для иконки очистки поля поиска -->
-        android:visibility="gone"/>
+        tools:ignore="TouchTargetSizeCheck"
+        android:textColor="?attr/searchTextColor"
+        android:textColorHint="?attr/searchHintTextColor"
+        android:background="@drawable/edit_text"
 
-    </LinearLayout>
+    />
+
+    <ImageView
+        android:id="@+id/clearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_close"
+        android:padding="8dp"
+        app:tint="?attr/searchIconTint"
+        android:visibility="gone" />
 
 </LinearLayout>
+
+    </LinearLayout>
