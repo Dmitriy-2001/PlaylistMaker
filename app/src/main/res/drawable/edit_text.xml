@@ -3,10 +3,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="?attr/searchFieldBackground"/> <!-- цвет фона -->
     <corners android:radius="16dp"/>  <!-- Радиус закругления углов -->
-    <size
-        android:width="328dp"
-        android:height="36dp"
-        android:viewportWidth="328"
-        android:viewportHeight="36"
-    />
+
 </shape>

@@ -16,7 +16,7 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var inputEditText: EditText
     private lateinit var clearButton: ImageView
-
+    private var searchQuery: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -46,12 +46,26 @@ class SearchActivity : AppCompatActivity() {
                 clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+                searchQuery = s.toString()
+            }
         })
+        if (savedInstanceState != null) {
+            searchQuery = savedInstanceState.getString(SEARCH_QUERY_KEY)
+            inputEditText.setText(searchQuery)
+        }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SEARCH_QUERY_KEY, searchQuery)
+    }
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(inputEditText.windowToken, 0)
+    }
+
+    companion object {
+        private const val SEARCH_QUERY_KEY = "search_query"
     }
 }

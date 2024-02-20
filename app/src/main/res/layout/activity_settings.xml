@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         app:title="@string/settings"
         app:navigationIcon="@drawable/arrow_back"
+        android:fontFamily="@font/ys_display_medium"
         />
 
     <LinearLayout
@@ -23,6 +24,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginTop="24dp"
+
        >
 
             <Switch
@@ -35,6 +37,7 @@
                 android:minHeight="48dp"
                 android:text="@string/dark_theme"
                 android:textSize="@dimen/text"
+                android:fontFamily="@font/ys_display_medium"
                 android:layout_gravity="end|center_vertical"
                 />
 
@@ -51,9 +54,10 @@
                 android:layout_gravity="start"
                 android:text="@string/share_the_app"
                 android:textSize="@dimen/text"
+                android:fontFamily="@font/ys_display_medium"
                 android:gravity="center"
                 android:layout_marginStart="@dimen/medium_padding"
-                style="@style/Settings"
+
                />
 
             <ImageView
@@ -76,6 +80,7 @@
                 android:layout_gravity="start"
                 android:text="@string/write_to_support"
                 android:textSize="@dimen/text"
+                android:fontFamily="@font/ys_display_medium"
                 android:gravity="center"
                 android:layout_marginStart="@dimen/medium_padding"
                 style="@style/Settings"/>
@@ -100,6 +105,7 @@
                 android:layout_gravity="start"
                 android:text="@string/user_agreement"
                 android:textSize="@dimen/text"
+                android:fontFamily="@font/ys_display_medium"
                 android:gravity="center"
                 android:layout_marginStart="@dimen/medium_padding"
                 style="@style/Settings"/>
