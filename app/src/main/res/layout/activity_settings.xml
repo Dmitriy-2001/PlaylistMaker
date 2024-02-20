@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@style/Settings"
+
+    >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/settings_back_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/settings"
+        app:navigationIcon="@drawable/arrow_back"
+        />
+
+    <LinearLayout
+        android:id="@+id/settingsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+       >
+
+            <Switch
+                android:id="@+id/switchDarkTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="@dimen/medium_padding"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:text="@string/dark_theme"
+                android:textSize="@dimen/text"
+                android:layout_gravity="end|center_vertical"
+                />
+
+
+        <FrameLayout
+            android:id="@+id/shareButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:text="@string/share_the_app"
+                android:textSize="@dimen/text"
+                android:gravity="center"
+                android:layout_marginStart="@dimen/medium_padding"
+                style="@style/Settings"
+               />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/share"
+                android:layout_gravity="end"
+                android:layout_marginEnd="@dimen/medium_padding"
+                />
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/supportButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:text="@string/write_to_support"
+                android:textSize="@dimen/text"
+                android:gravity="center"
+                android:layout_marginStart="@dimen/medium_padding"
+                style="@style/Settings"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/support"
+                android:layout_gravity="end"
+                android:layout_marginEnd="@dimen/medium_padding"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/agreementButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:text="@string/user_agreement"
+                android:textSize="@dimen/text"
+                android:gravity="center"
+                android:layout_marginStart="@dimen/medium_padding"
+                style="@style/Settings"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/arrow_forward"
+                android:layout_gravity="end"
+                android:layout_marginEnd="@dimen/medium_padding"/>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
