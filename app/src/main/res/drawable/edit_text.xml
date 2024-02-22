@@ -2,6 +2,6 @@
 <!-- res/drawable/edit_text.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="?attr/searchFieldBackground"/> <!-- цвет фона -->
-    <corners android:radius="16dp"/>  <!-- Радиус закругления углов -->
+    <corners android:radius="8dp"/>  <!-- Радиус закругления углов -->
 
 </shape>

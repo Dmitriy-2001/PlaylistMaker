@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+  <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="DarkTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
@@ -13,6 +13,7 @@
         <item name="textColor">@color/white</item>
         <item name="iconTint">@color/white</item>
         <item name="android:colorPrimaryDark">@color/blackYP</item>
+
     </style>
 
     <style name="Main">
@@ -26,6 +27,11 @@
         <item name="android:iconTint">@color/white</item>
         <item name="textColor">@color/white</item>
         <item name="tint">@color/white</item>
+        <item name="switchTrackColor">@color/gray</item>
+        <item name="blackWhite">@color/white</item>
+        <item name="switchThumbColor">@color/blue</item>
+        <item name="grayWhite">@color/white</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
     </style>
 
 
