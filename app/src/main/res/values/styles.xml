@@ -34,8 +34,7 @@
         <item name="android:layout_marginHorizontal">@dimen/medium_padding</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:textSize">@dimen/text</item>
-        <item name="thumbTint">@color/gray</item>
-        <item name="trackTint">@color/light_grey</item>
+
     </style>
 
 <style name="SettingTextView">

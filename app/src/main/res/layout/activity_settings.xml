@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:title="@string/settings"
         app:navigationIcon="@drawable/arrow_back"
-        android:fontFamily="@font/ys_display_medium" />
+         />
 
     <!-- Ваш SwitchMaterial -->
     <com.google.android.material.switchmaterial.SwitchMaterial

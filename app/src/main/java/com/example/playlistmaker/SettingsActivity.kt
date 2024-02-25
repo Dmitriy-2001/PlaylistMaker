@@ -16,6 +16,8 @@ import android.net.Uri
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -24,10 +26,12 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-     //   updateColors()
 
         // Настройка переключателя темной темы
-        val switchDarkTheme: Switch = findViewById(R.id.switchDarkTheme)
+        val switchDarkTheme: SwitchMaterial = findViewById(R.id.switchDarkTheme)
+
+        switchDarkTheme.isChecked = isDarkThemeEnabled()
+
         switchDarkTheme.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -36,24 +40,24 @@ class SettingsActivity : AppCompatActivity() {
             }
 
         }
-        val toolbar: Toolbar = findViewById(R.id.settings_back_button)
+        val toolbar: MaterialToolbar = findViewById(R.id.settings_back_button)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
             finish() // Закрываем текущую активити при нажатии "Назад"
         }
 
-        val shareButton: FrameLayout = findViewById(R.id.shareButton)
+        val shareButton: MaterialTextView = findViewById(R.id.shareButton)
         shareButton.setOnClickListener {
             shareApp()
         }
 
-        val supportButton: FrameLayout = findViewById(R.id.supportButton)
+        val supportButton: MaterialTextView = findViewById(R.id.supportButton)
         supportButton.setOnClickListener {
             writeToSupport()
         }
 
-        val agreementButton: FrameLayout = findViewById(R.id.agreementButton)
+        val agreementButton: MaterialTextView = findViewById(R.id.agreementButton)
         agreementButton.setOnClickListener {
             openUserAgreement()
         }
@@ -70,7 +74,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun writeToSupport() {
         val recipient = getString(R.string.my_mail)
-        val subject = (R.string.support_message)
+        val subject = getString(R.string.support_message)
         val message = getString(R.string.thanks_message)
         val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
@@ -86,5 +90,9 @@ class SettingsActivity : AppCompatActivity() {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(browserIntent)
     }
-
+    private fun isDarkThemeEnabled(): Boolean {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+    }
 }
+
