@@ -50,6 +50,11 @@
     </style>
 
 
+      <style name="AddFont" parent="Theme.Material3.DayNight.NoActionBar">
+          <item name="android:textColor">@color/white</item> <!-- Белый цвет текста -->
+          <item name="android:tint">@color/white</item> <!-- Белый цвет иконки -->
+          <item name="android:textSize">@dimen/small_text</item>
+      </style>
 
 
 

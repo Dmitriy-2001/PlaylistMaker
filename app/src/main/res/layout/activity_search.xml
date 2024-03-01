@@ -57,8 +57,17 @@
         android:padding="@dimen/small_padding"
         app:tint="?attr/searchIconTint"
         android:visibility="gone"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        />
 
 </FrameLayout>
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewTracks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="23dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/list_item_track"
+        tools:itemCount="20"
+        />
     </LinearLayout>

@@ -39,5 +39,12 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
     </style>
 
+    <style name="AddFont">
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textSize">@dimen/small_text</item>
+        <item name="android:tint">@color/gray</item>
+    </style>
+
+
 
 </resources>
