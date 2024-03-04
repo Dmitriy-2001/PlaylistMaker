@@ -25,9 +25,7 @@
     android:layout_marginTop="@dimen/small_padding"
     android:layout_marginEnd="@dimen/medium_padding"
     android:orientation="horizontal"
-
         >
-
 
     <EditText
         android:drawableStart="@drawable/search"
@@ -45,7 +43,6 @@
         android:textColor="?attr/searchTextColor"
         android:textColorHint="?attr/searchHintTextColor"
         android:background="@drawable/edit_text"
-
     />
 
     <ImageView
