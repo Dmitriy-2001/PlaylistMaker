@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Switch
+import com.google.android.material.switchmaterial.SwitchMaterial
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
@@ -15,6 +16,8 @@ import android.net.Uri
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -23,10 +26,12 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-     //   updateColors()
 
         // Настройка переключателя темной темы
-        val switchDarkTheme: Switch = findViewById(R.id.switchDarkTheme)
+        val switchDarkTheme: SwitchMaterial = findViewById(R.id.switchDarkTheme)
+
+        switchDarkTheme.isChecked = isDarkThemeEnabled()
+
         switchDarkTheme.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -35,66 +40,42 @@ class SettingsActivity : AppCompatActivity() {
             }
 
         }
-        val toolbar: Toolbar = findViewById(R.id.settings_back_button)
+        val toolbar: MaterialToolbar = findViewById(R.id.settings_back_button)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
             finish() // Закрываем текущую активити при нажатии "Назад"
         }
 
-        val shareButton: FrameLayout = findViewById(R.id.shareButton)
+        val shareButton: MaterialTextView = findViewById(R.id.shareButton)
         shareButton.setOnClickListener {
             shareApp()
         }
 
-        val supportButton: FrameLayout = findViewById(R.id.supportButton)
+        val supportButton: MaterialTextView = findViewById(R.id.supportButton)
         supportButton.setOnClickListener {
             writeToSupport()
         }
 
-        val agreementButton: FrameLayout = findViewById(R.id.agreementButton)
+        val agreementButton: MaterialTextView = findViewById(R.id.agreementButton)
         agreementButton.setOnClickListener {
             openUserAgreement()
         }
     }
 
-  /*  private fun updateColors() {
-        val settingsLayout: LinearLayout = findViewById(R.id.settingsLayout)
-        val toolbar: Toolbar = findViewById(R.id.settings_back_button)
-
-        if (isDarkThemeEnabled()) {
-            settingsLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.blackYP))
-            toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white))
-            val icon = ContextCompat.getDrawable(this, R.drawable.arrow_back)
-            icon?.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP)
-            toolbar.navigationIcon = icon
-        } else {
-            settingsLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
-            toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.black))
-            val icon = ContextCompat.getDrawable(this, R.drawable.arrow_back)
-            icon?.setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.SRC_ATOP)
-            toolbar.navigationIcon = icon
-        }
-    }
-
-    private fun isDarkThemeEnabled(): Boolean {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
-    }
-*/
     private fun shareApp() {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "Check out this Android development course at Yandex.Praktikum: https://practicum.yandex.ru/android-developer/")
+            putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message))
             type = "text/plain"
         }
-        startActivity(Intent.createChooser(sendIntent, "Share via"))
+        startActivity(Intent.createChooser(sendIntent, getString(R.string.share_via)))
     }
 
     private fun writeToSupport() {
-        val recipient = "richard.orlov13@gmail.com"
-        val subject = "Сообщение разработчикам и разработчицам приложения Playlist Maker"
-        val message = "Спасибо разработчикам и разработчицам за крутое приложение!"
+        val recipient = getString(R.string.my_mail)
+        val subject = getString(R.string.support_message)
+        val message = getString(R.string.thanks_message)
         val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(recipient))
@@ -105,9 +86,13 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun openUserAgreement() {
-        val url = "https://yandex.ru/legal/practicum_offer/"
+        val url = getString(R.string.user_agreement_url)
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(browserIntent)
     }
-
+    private fun isDarkThemeEnabled(): Boolean {
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+    }
 }
+

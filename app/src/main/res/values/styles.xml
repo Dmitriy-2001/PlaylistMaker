@@ -9,7 +9,7 @@
         <item name="android:paddingTop">14dp</item>
         <item name="android:paddingStart">@dimen/medium_padding</item>
     </style>
-    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button">
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:paddingLeft">24dp</item>
         <item name="android:paddingRight">24dp</item>
         <item name="android:paddingTop">16dp</item>
@@ -28,7 +28,22 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
     </style>
 
+    <style name="MySwitchMaterialStyle">
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingHorizontal">@dimen/medium_padding</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:textSize">@dimen/text</item>
+    </style>
 
+<style name="SettingTextView">
+    <item name="android:textSize">@dimen/text</item>
+    <item name="android:paddingHorizontal">@dimen/medium_padding</item>
+    <item name="android:drawablePadding">@dimen/medium_padding</item>
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:textColor">?attr/blackWhite</item>
+    <item name="android:drawableTint">?attr/grayWhite</item>
+</style>
 
 
 

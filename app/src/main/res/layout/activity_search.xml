@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:theme="@style/Search">
+    android:theme="@style/Search"
+     >
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,36 +17,30 @@
 
         />
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:background="@drawable/edit_text"
     android:layout_marginStart="@dimen/medium_padding"
-    android:layout_marginTop="@dimen/large_padding"
+    android:layout_marginTop="@dimen/small_padding"
     android:layout_marginEnd="@dimen/medium_padding"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/search"
-        android:padding="8dp"
-        app:tint="?attr/searchIconTint"
-        android:background="@android:color/transparent"/>
+        >
+
 
     <EditText
+        android:drawableStart="@drawable/search"
+        android:drawableTint="?attr/searchIconTint"
+        android:drawablePadding="@dimen/small_padding"
         android:id="@+id/search_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="@dimen/small_padding"
+        android:layout_marginEnd="@dimen/small_padding"
         android:hint="@string/search"
         android:inputType="text"
-        android:paddingStart="12dp"
         android:paddingEnd="32dp"
-
         tools:ignore="TouchTargetSizeCheck"
         android:textColor="?attr/searchTextColor"
         android:textColorHint="?attr/searchHintTextColor"
@@ -57,12 +52,22 @@
         android:id="@+id/clearButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center_vertical|end"
         android:src="@drawable/ic_close"
-        android:padding="8dp"
+        android:padding="@dimen/small_padding"
         app:tint="?attr/searchIconTint"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:background="@android:color/transparent"
+        />
 
-</LinearLayout>
-
+</FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewTracks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="23dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/list_item_track"
+        tools:itemCount="20"
+        />
     </LinearLayout>
