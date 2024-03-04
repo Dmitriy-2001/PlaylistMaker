@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         app:title="@string/search"
         app:navigationIcon="@drawable/arrow_back"
-
+        app:navigationIconTint="?attr/colorOnPrimary"
         />
 
     <FrameLayout
