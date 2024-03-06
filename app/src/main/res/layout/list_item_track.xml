@@ -30,7 +30,7 @@
             android:id="@+id/trackName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/small_padding"
+            android:layout_marginLeft="@dimen/small_padding"
             android:gravity="center_vertical"
             android:layout_gravity="start"
             android:fontFamily="@font/ys_display_regular"
@@ -58,14 +58,15 @@
                 android:layout_width="13dp"
                 android:layout_height="13dp"
                 android:src="@drawable/round"
-                android:layout_marginStart="5dp"
+                android:layout_marginHorizontal="5dp"
                 android:layout_gravity="center_vertical"
+                style="@style/AddFont"
                 />
             <TextView
                 android:id="@+id/trackTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
+
                 android:gravity="center_vertical"
                 tools:text="5:00"
                 android:layout_gravity="start"
@@ -78,5 +79,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:src="@drawable/arrow_forward"/>
+        android:src="@drawable/arrow_forward"
+        style="@style/AddFont"/>
 </LinearLayout>
