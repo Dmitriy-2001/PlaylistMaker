@@ -33,8 +33,6 @@
         android:layout_height="60dp"
         android:drawableEnd="@drawable/share"
         android:text="@string/share_the_app"
-        android:textColor="?attr/blackWhite"
-        android:drawableTint="?attr/grayWhite"
         style="@style/SettingTextView"
         />
 
@@ -45,8 +43,6 @@
         android:layout_height="60dp"
         android:drawableEnd="@drawable/support"
         android:text="@string/write_to_support"
-        android:textColor="?attr/blackWhite"
-        android:drawableTint="?attr/grayWhite"
         style="@style/SettingTextView"/>
 
     <!-- Третий элемент с иконкой -->
@@ -56,8 +52,6 @@
         android:layout_height="60dp"
         android:drawableEnd="@drawable/arrow_forward"
         android:text="@string/user_agreement"
-        android:textColor="?attr/blackWhite"
-        android:drawableTint="?attr/grayWhite"
         style="@style/SettingTextView"/>
 
 </LinearLayout>

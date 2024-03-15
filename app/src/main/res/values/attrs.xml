@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="textColor" format="color" />
+     <attr name="textColor" format="color"/>
     <attr name="iconTint" format="color" />
 
     <attr name="searchFieldBackground" format="reference|color" />
@@ -11,4 +11,7 @@
     <attr name="switchTrackColor" format="color"/>
     <attr name="grayWhite" format="color"/>
     <attr name="switchThumbColor" format="color"/>
+
+
+
 </resources>

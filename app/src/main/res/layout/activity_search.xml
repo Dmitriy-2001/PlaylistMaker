@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         app:title="@string/search"
         app:navigationIcon="@drawable/arrow_back"
-
+        app:navigationIconTint="?attr/colorOnPrimary"
         />
 
     <FrameLayout
@@ -25,9 +25,7 @@
     android:layout_marginTop="@dimen/small_padding"
     android:layout_marginEnd="@dimen/medium_padding"
     android:orientation="horizontal"
-
         >
-
 
     <EditText
         android:drawableStart="@drawable/search"
@@ -45,7 +43,6 @@
         android:textColor="?attr/searchTextColor"
         android:textColorHint="?attr/searchHintTextColor"
         android:background="@drawable/edit_text"
-
     />
 
     <ImageView
@@ -57,8 +54,17 @@
         android:padding="@dimen/small_padding"
         app:tint="?attr/searchIconTint"
         android:visibility="gone"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        />
 
 </FrameLayout>
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewTracks"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/list_item_track"
+        tools:itemCount="20"
+        />
     </LinearLayout>

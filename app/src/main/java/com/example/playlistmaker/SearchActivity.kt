@@ -2,6 +2,8 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.os.Build.VERSION_CODES.N
+import android.os.Build.VERSION_CODES.O
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +13,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity() {
@@ -18,6 +22,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var inputEditText: EditText
     private lateinit var clearButton: ImageView
     private var searchQuery: String? = null
+    private val audio = ArrayList<Track>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -55,6 +60,11 @@ class SearchActivity : AppCompatActivity() {
             searchQuery = savedInstanceState.getString(SEARCH_QUERY_KEY)
             inputEditText.setText(searchQuery)
         }
+
+
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewTracks)
+        val trackAdapter = TrackAdapter(trackList)
+        recyclerView.adapter = trackAdapter
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -69,4 +79,5 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val SEARCH_QUERY_KEY = "search_query"
     }
+
 }
