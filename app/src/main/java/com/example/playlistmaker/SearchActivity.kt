@@ -46,7 +46,7 @@ class SearchActivity : AppCompatActivity() {
         .build()
     private val iTunesService = retrofit.create(iTunesAPI::class.java)
     private val trackList = ArrayList<Track>()
-    private val adapter = TrackAdapter()
+    private val adapter = TrackAdapter(trackList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +68,7 @@ class SearchActivity : AppCompatActivity() {
         clearButton.setOnClickListener {
             inputEditText.setText("")
             hideSoftKeyboard()
+            recyclerView.visibility = View.GONE
         }
         btnReload.setOnClickListener { iTunesSearch() }
 

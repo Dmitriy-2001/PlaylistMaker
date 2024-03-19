@@ -8,7 +8,7 @@
         <item name="android:textColorPrimary">@color/black</item> <!-- Цвет текста -->
         <item name="android:textColorSecondary">@color/black</item><!-- Цвет иконок -->
         <item name="android:colorPrimaryDark">@color/blue</item>
-        <item name="vector_color">@color/blackYP</item>
+        <item name="vector_color">@color/black</item>
     </style>
 
     <style name="Main" parent="Theme.Material3.DayNight.NoActionBar">
@@ -90,5 +90,7 @@
         <item name="android:textColor">@color/blackYP</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
     </style>
+
+
 
 </resources>

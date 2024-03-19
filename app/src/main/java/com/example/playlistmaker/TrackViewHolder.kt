@@ -23,7 +23,7 @@ class TrackViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         trackTime.text =  SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
         Glide.with(itemView)
             .load(track.artworkUrl100)
-            .placeholder(R.drawable.search)
+            .placeholder(R.drawable.placeholder)
             .centerCrop()
             .transform(RoundedCorners(Utils.dpToPx(2)))
             .into(artworkUrl100)
