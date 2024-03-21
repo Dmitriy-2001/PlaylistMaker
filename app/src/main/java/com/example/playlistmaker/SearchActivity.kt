@@ -77,6 +77,10 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
+                if (s.isNullOrEmpty()) {
+                    recyclerView.visibility = View.GONE
+                    statusLayout.visibility = View.GONE
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {}
