@@ -3,7 +3,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackAdapter (val trackList: ArrayList<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
+class TrackAdapter (var trackList: ArrayList<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
 
 
 
@@ -14,6 +14,9 @@ class TrackAdapter (val trackList: ArrayList<Track>) : RecyclerView.Adapter<Trac
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(trackList[position])
+        holder.itemView.setOnClickListener {
+            SearchHistory.add(trackList[position])
+        }
     }
 
     override fun getItemCount(): Int {

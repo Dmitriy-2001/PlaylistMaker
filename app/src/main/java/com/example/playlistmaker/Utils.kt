@@ -1,3 +1,4 @@
+import android.content.SharedPreferences
 import android.content.res.Resources
 
 object Utils {
