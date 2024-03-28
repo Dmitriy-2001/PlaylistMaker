@@ -12,6 +12,7 @@
     <attr name="grayWhite" format="color"/>
     <attr name="switchThumbColor" format="color"/>
 
+    <attr name="vector_color" format="reference|color"/>
 
 
 </resources>
