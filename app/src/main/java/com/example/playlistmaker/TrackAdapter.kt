@@ -1,26 +1,43 @@
 package com.example.playlistmaker
 import android.view.LayoutInflater
+import android.widget.ImageView
+import android.widget.TextView
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
-class TrackAdapter (var trackList: ArrayList<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
-
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_track, parent, false)
-        return TrackViewHolder(view)
+class TrackAdapter(private val clickListener: TrackClickListener): RecyclerView.Adapter<TrackAdapter.TrackHolder>() {
+    var tracks = ArrayList<Track>()
+    fun interface TrackClickListener {
+        fun onTrackClick(track: Track)
     }
+    class TrackHolder(parent: ViewGroup): RecyclerView.ViewHolder(
+        LayoutInflater.from(parent.context).inflate(R.layout.activity_track, parent, false)
+    ) {
+        private var artwork = itemView.findViewById<ImageView>(R.id.artwork)
+        private var artistName = itemView.findViewById<TextView>(R.id.artistName)
+        private var trackName = itemView.findViewById<TextView>(R.id.trackName)
+        private var trackTime = itemView.findViewById<TextView>(R.id.trackTime)
 
-    override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(trackList[position])
-        holder.itemView.setOnClickListener {
-            SearchHistory.add(trackList[position])
+        fun bind(track: Track) {
+
+            val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime.toLong())
+
+            Glide.with(itemView).load(track.artworkUrl).placeholder(R.drawable.placeholder).into(artwork)
+            artistName.text = track.artistName
+            trackName.text = track.trackName
+            trackTime.text = formattedTime
         }
     }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = TrackHolder(parent)
 
-    override fun getItemCount(): Int {
-        return trackList.size
+    override fun onBindViewHolder(holder: TrackHolder, position: Int) {
+        holder.bind(tracks[position])
+        holder.itemView.setOnClickListener {clickListener.onTrackClick(tracks[position])}
     }
+    override fun getItemCount() = tracks.size
 
 }

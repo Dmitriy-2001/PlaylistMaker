@@ -16,8 +16,17 @@
     <string name="my_email">ameliya2288@yandex.ru</string>
     <string name="reload">Обновить</string>
     <string name="no_data_found">Ничего не нашлось</string>
-    <string name="connect_error">Проблемы со связью</string>
+    <string name="connect_error">Проблемы с сервером</string>
     <string name="no_internet">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="history_clear">Очистить историю</string>
     <string name="search_text">Вы искали</string>
+
+    <string name="track_name">Название песни</string>
+    <string name="artist_name">Исполнитель</string>
+    <string name="time">00:00</string>
+    <string name="track_time">Длительность</string>
+    <string name="collection_name">Альбом</string>
+    <string name="release_date">Год</string>
+    <string name="genre_name">Жанр</string>
+    <string name="country">Страна</string>
 </resources>
