@@ -2,22 +2,14 @@ package com.example.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.LinearLayout
-import android.widget.Switch
 import com.google.android.material.switchmaterial.SwitchMaterial
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import android.content.res.Configuration
-import android.graphics.PorterDuff
 import android.net.Uri
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.Toast
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textview.MaterialTextView
+import android.content.res.Configuration
+
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -26,20 +18,16 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-
-        // Настройка переключателя темной темы
-        val switchDarkTheme: SwitchMaterial = findViewById(R.id.switchDarkTheme)
-
-        switchDarkTheme.isChecked = isDarkThemeEnabled()
-
-        switchDarkTheme.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-
+     //Настройка темы
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.switchDarkTheme)
+        if ((applicationContext as App).darkTheme) {
+            themeSwitcher.setChecked(true);
         }
+
+        themeSwitcher.setOnCheckedChangeListener {switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
+
         val toolbar: MaterialToolbar = findViewById(R.id.settings_back_button)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -95,4 +83,3 @@ class SettingsActivity : AppCompatActivity() {
         return currentNightMode == Configuration.UI_MODE_NIGHT_YES
     }
 }
-
