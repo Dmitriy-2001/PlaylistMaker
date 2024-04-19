@@ -63,7 +63,12 @@ class AudioPlayerActivity : AppCompatActivity() {
                 collectionName.text = "n/a"
             }
 
-            year.text = track.releaseDate.split("-", limit = 2)[0]
+            try {
+                year.text = track.releaseDate.split("-", limit = 2)[0]
+            } catch (e: Exception) {
+                year.text = "n/a"
+            }
+
             genre.text = track.primaryGenreName
             country.text = track.country
         }

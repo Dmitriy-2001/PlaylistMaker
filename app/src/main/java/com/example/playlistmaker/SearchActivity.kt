@@ -131,6 +131,12 @@ class SearchActivity : AppCompatActivity() {
                 textFromSearchWidget = inputEditText.text.toString()
                 historyWidget.visibility =
                     if (inputEditText.hasFocus() && s?.isEmpty() == true && searchHistory!!.historyList.isNotEmpty()) View.VISIBLE else View.GONE
+                if (s.isNullOrEmpty()) {
+                    // Скрываем результаты поиска
+                    recyclerView.visibility = View.GONE
+                    // Очищаем список треков
+                    tracks.clear()
+                }
             }
 
             override fun afterTextChanged(p0: Editable?) {}
@@ -227,6 +233,7 @@ class SearchActivity : AppCompatActivity() {
                                 tracks.clear()
                                 tracks.addAll(response.body()?.tracks!!)
                                 adapter.notifyDataSetChanged()
+                                recyclerView.visibility = View.VISIBLE
                                 showPlaceholder(null)
                             } else {
                                 showPlaceholder(true)
