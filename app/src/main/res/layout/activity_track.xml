@@ -1,81 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="61dp"
-    android:clickable="true"
-    android:focusable="true"
+    android:id="@+id/rootLayout"
     android:orientation="horizontal"
-    android:layout_marginHorizontal="@dimen/thirteen">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="@dimen/small_padding"
+    android:minHeight="@dimen/sixty_one">
 
-    <ImageView
-        android:id="@+id/trackImage"
+    <FrameLayout
         android:layout_width="@dimen/forty_five"
         android:layout_height="@dimen/forty_five"
-        android:src="@drawable/placeholder"
-        android:layout_gravity="center"
-        />
+        android:layout_marginStart="@dimen/thirteen"
+        android:layout_gravity="center_vertical"
+        app:cardCornerRadius="@dimen/two">
+
+        <ImageView
+            android:id="@+id/artwork"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/placeholder"/>
+
+    </FrameLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1">
+        android:paddingVertical="@dimen/four"
+        android:paddingHorizontal="@dimen/small_padding">
+
         <TextView
             android:id="@+id/trackName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/small_padding"
-            android:gravity="center_vertical"
-            tools:text="No Reply"
-            android:layout_gravity="start"
-            style="place_holder"
             android:maxLines="1"
-            android:ellipsize="end"/>
+            android:ellipsize="end"
+            android:textSize="@dimen/medium_text"
+            tools:text="Название трека"/>
+
         <LinearLayout
             android:layout_width="wrap_content"
-            android:orientation="horizontal"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             >
+
             <TextView
                 android:id="@+id/artistName"
-                style="@style/AddFont"
+                android:textColor="?attr/grayWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/small_padding"
-                android:gravity="center_vertical"
-                tools:text="The Beatles"
-                android:layout_gravity="start"
+                android:textSize="@dimen/small_text"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:singleLine="true"/>
+                android:layout_weight="1"
+                tools:text="Исполнитель"/>
+
             <ImageView
-                style="@style/AddFont"
-                android:layout_width="@dimen/thirteen"
-                android:layout_height="@dimen/thirteen"
-                android:src="@drawable/round"
-                android:layout_marginStart="@dimen/five"
-                android:layout_gravity="center_vertical"/>
-            <TextView
-                android:id="@+id/trackTime"
-                style="@style/AddFont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/round"
+                app:tint="?attr/grayWhite"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0"
+                android:layout_marginStart="@dimen/five"/>
+
+            <TextView
+                android:id="@+id/trackTime"
+                android:textColor="?attr/grayWhite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_text"
+                android:layout_weight="0"
                 android:layout_marginStart="@dimen/five"
-                android:gravity="center_vertical"
-                tools:text="5:00"
-                android:layout_gravity="start"/>
+                tools:text="2:55"/>
+
         </LinearLayout>
+
 
     </LinearLayout>
 
     <ImageView
+        app:tint="?attr/grayWhite"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
+        android:layout_height="wrap_content"
         android:src="@drawable/arrow_forward"
-        style="@style/AddFont"/>
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="@dimen/twenty"/>
 
 </LinearLayout>

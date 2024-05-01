@@ -10,15 +10,14 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textview.MaterialTextView
 import android.content.res.Configuration
 
-
 class SettingsActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
-     //Настройка темы
+        val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
+        //Настройка темы
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.switchDarkTheme)
         if ((applicationContext as App).darkTheme) {
             themeSwitcher.setChecked(true);
@@ -26,6 +25,9 @@ class SettingsActivity : AppCompatActivity() {
 
         themeSwitcher.setOnCheckedChangeListener {switcher, checked ->
             (applicationContext as App).switchTheme(checked)
+            sharedPreferences.edit()
+                .putBoolean(KEY_FOR_APP_THEME, checked)
+                .apply()
         }
 
         val toolbar: MaterialToolbar = findViewById(R.id.settings_back_button)
@@ -83,3 +85,4 @@ class SettingsActivity : AppCompatActivity() {
         return currentNightMode == Configuration.UI_MODE_NIGHT_YES
     }
 }
+

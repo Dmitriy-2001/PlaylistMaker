@@ -16,6 +16,7 @@
         <item name="vector_color">@color/white</item>
         <item name="blackWhite">@color/white</item>
         <item name="whiteBlack">@color/blackYP</item>
+        <item name="grayWhite">@color/white</item>
     </style>
 
     <style name="Main">
