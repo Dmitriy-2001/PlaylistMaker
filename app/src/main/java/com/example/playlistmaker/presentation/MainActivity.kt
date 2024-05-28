@@ -1,17 +1,11 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
-import android.view.View.OnClickListener
-import android.widget.ImageView
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import android.content.res.Configuration
+import com.example.playlistmaker.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,9 +30,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun isDarkThemeEnabled(): Boolean {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
-    }
+  //  private fun isDarkThemeEnabled(): Boolean {
+  //      val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+  //      return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+ //   }
 
 }

@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,6 +12,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.media.MediaPlayer
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 
 class AudioPlayerActivity : AppCompatActivity() {
     companion object {

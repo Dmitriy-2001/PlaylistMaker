@@ -1,10 +1,12 @@
 // SearchActivity.kt
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,24 +17,29 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.SHARED_PREFERENCES
+import com.example.playlistmaker.data.SearchHistory
+import com.example.playlistmaker.data.dto.TrackResponse
+import com.example.playlistmaker.data.network.ItunesApi
+import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import android.os.Handler
-import android.widget.ProgressBar
 
 const val KEY_FOR_HISTORY_LIST = "key_for_history_list"
 const val KEY_FOR_PLAYLIST = "key_for_playlist"
+
 class SearchActivity : AppCompatActivity() {
     var textFromSearchWidget = ""
-
     private val baseUrl = "https://itunes.apple.com"
 
     companion object {
@@ -44,27 +51,21 @@ class SearchActivity : AppCompatActivity() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { search() }
-
     val tracks = ArrayList<Track>()
-
     var searchHistory: SearchHistory? = null
-
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
     private val trackService = retrofit.create(ItunesApi::class.java)
-
     private val adapter = TrackAdapter {
         clickToTrackList(it)
     }
-
     private val historyAdapter = TrackAdapter {
         if (clickDebounce()) {
             clickToHistoryTrackList(it)
         }
     }
-
     private lateinit var inputEditText: EditText
     private lateinit var clearButton: ImageView
     private lateinit var backArrowImageView: ImageView
@@ -77,29 +78,25 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
+    private lateinit var searchedText: TextView
 
-
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
         val sharedPreferences: SharedPreferences =
             getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
-
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
         adapter.tracks = tracks
-
         historyRecyclerView = findViewById(R.id.history_recycle_view)
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
         historyRecyclerView.adapter = historyAdapter
         historyAdapter.tracks = searchHistory!!.historyList
-
         inputEditText = findViewById(R.id.inputEditText)
         clearButton = findViewById(R.id.clearIcon)
         backArrowImageView = findViewById(R.id.backArrowImageView)
@@ -110,12 +107,11 @@ class SearchActivity : AppCompatActivity() {
         historyWidget = findViewById(R.id.history_widget)
         clearHistoryButton = findViewById(R.id.clear_history_button)
         progressBar = findViewById(R.id.progressBar)
-
-
+        searchedText = findViewById(R.id.history_text)
 
         clearHistoryButton.setOnClickListener {
             searchHistory!!.clearHistoryList()
-            adapter.notifyDataSetChanged()
+            historyAdapter.notifyDataSetChanged()
             historyWidget.visibility = View.GONE
         }
 
@@ -125,6 +121,7 @@ class SearchActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             inputMethodManager.hideSoftInputFromWindow(inputEditText.windowToken, 0)
             showPlaceholder(null)
+            showHistoryWidget()
         }
 
         updateButton.setOnClickListener {
@@ -141,15 +138,14 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
                 textFromSearchWidget = inputEditText.text.toString()
-                historyWidget.visibility =
-                    if (inputEditText.hasFocus() && s?.isEmpty() == true && searchHistory!!.historyList.isNotEmpty()) View.VISIBLE else View.GONE
                 if (s.isNullOrEmpty()) {
-                    // Скрываем результаты поиска
+                    showHistoryWidget()
                     recyclerView.visibility = View.GONE
-                    // Очищаем список треков
                     tracks.clear()
                     notFoundWidget.visibility = View.GONE
                     badConnectionWidget.visibility = View.GONE
+                } else {
+                    historyWidget.visibility = View.GONE
                 }
                 searchDebounce()
             }
@@ -168,18 +164,12 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // Устанавливаем видимость historyWidget в VISIBLE при создании активности
-        historyWidget.visibility = View.VISIBLE
-
-        if (searchHistory?.historyList.isNullOrEmpty()) {
-            historyWidget.visibility = View.GONE
-        } else { historyWidget.visibility = View.VISIBLE }
-
-
+        showHistoryWidget()
     }
 
     override fun onStop() {
         super.onStop()
-        searchHistory?.writeToSH(searchHistory!!.historyList)
+        searchHistory?.saveToSH(searchHistory!!.historyList)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -219,7 +209,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showPlaceholder(flag: Boolean?, message: String = "") {
         if (flag != null) {
-            if (flag == true) {
+            if (flag) {
                 badConnectionWidget.visibility = View.GONE
                 notFoundWidget.visibility = View.VISIBLE
             } else {
@@ -237,46 +227,48 @@ class SearchActivity : AppCompatActivity() {
 
     private fun search() {
         if (inputEditText.text.toString().isNotEmpty()) {
-
             progressBar.visibility = View.VISIBLE
+            notFoundWidget.visibility = View.GONE
+            badConnectionWidget.visibility = View.GONE
+            historyRecyclerView.visibility = View.GONE
+            clearHistoryButton.visibility = View.GONE
+            searchedText.visibility = View.GONE
 
-        trackService.search(text = inputEditText.text.toString())
-            .enqueue(object : Callback<TrackResponse> {
-                override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
-                ) {
-                    progressBar.visibility = View.GONE
+            trackService.search(text = inputEditText.text.toString())
+                .enqueue(object : Callback<TrackResponse> {
+                    override fun onResponse(
+                        call: Call<TrackResponse>,
+                        response: Response<TrackResponse>
+                    ) {
+                        progressBar.visibility = View.GONE
+                        when (response.code()) {
+                            200 -> {
+                                if (response.body()?.tracks?.isNotEmpty() == true) {
+                                    tracks.clear()
+                                    tracks.addAll(response.body()?.tracks!!)
+                                    adapter.notifyDataSetChanged()
+                                    showPlaceholder(null)
+                                } else {
+                                    showPlaceholder(true)
+                                }
+                            }
 
-                    when (response.code()) {
-                        200 -> {
-                            if (response.body()?.tracks?.isNotEmpty() == true) {
-                                tracks.clear()
-                                tracks.addAll(response.body()?.tracks!!)
-                                adapter.notifyDataSetChanged()
-                                recyclerView.visibility = View.VISIBLE
-                                showPlaceholder(null)
-                            } else {
-                                showPlaceholder(true)
+                            else -> {
+                                showPlaceholder(false, getString(R.string.connect_error))
                             }
                         }
-
-                        else -> {
-                            showPlaceholder(false, getString(R.string.connect_error))
-
-                        }
                     }
-                }
 
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    progressBar.visibility = View.GONE
-                    showPlaceholder(false, getString(R.string.no_internet))
-                }
-
-
-            })
+                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                        progressBar.visibility = View.GONE
+                        showPlaceholder(false, getString(R.string.no_internet))
+                    }
+                })
+        } else {
+            showHistoryWidget()
+        }
     }
-}
+
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
@@ -289,5 +281,13 @@ class SearchActivity : AppCompatActivity() {
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
+    }
+
+    private fun showHistoryWidget() {
+        if (searchHistory?.historyList.isNullOrEmpty()) {
+            historyWidget.visibility = View.GONE
+        } else {
+            historyWidget.visibility = View.VISIBLE
+        }
     }
 }
