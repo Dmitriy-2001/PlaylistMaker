@@ -112,7 +112,7 @@ class SearchActivity : AppCompatActivity() {
         clearHistoryButton.setOnClickListener {
             searchHistory!!.clearHistoryList()
             historyAdapter.notifyDataSetChanged()
-            historyWidget.visibility = View.GONE
+            showHistoryWidget()
         }
 
         clearButton.setOnClickListener {
@@ -146,6 +146,7 @@ class SearchActivity : AppCompatActivity() {
                     badConnectionWidget.visibility = View.GONE
                 } else {
                     historyWidget.visibility = View.GONE
+                    clearHistoryButton.visibility = View.GONE
                 }
                 searchDebounce()
             }
@@ -163,7 +164,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        // Устанавливаем видимость historyWidget в VISIBLE при создании активности
+        // Устанавливаем видимость historyWidget и clearHistoryButton в VISIBLE при создании активности
         showHistoryWidget()
     }
 
@@ -180,6 +181,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         inputEditText.setText(savedInstanceState.getString(EDIT_TEXT_VALUE, ""))
+        showHistoryWidget()
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -247,6 +249,7 @@ class SearchActivity : AppCompatActivity() {
                                     tracks.clear()
                                     tracks.addAll(response.body()?.tracks!!)
                                     adapter.notifyDataSetChanged()
+                                    recyclerView.visibility = View.VISIBLE // Показать результаты поиска
                                     showPlaceholder(null)
                                 } else {
                                     showPlaceholder(true)
@@ -286,8 +289,11 @@ class SearchActivity : AppCompatActivity() {
     private fun showHistoryWidget() {
         if (searchHistory?.historyList.isNullOrEmpty()) {
             historyWidget.visibility = View.GONE
+            clearHistoryButton.visibility = View.GONE
         } else {
             historyWidget.visibility = View.VISIBLE
+            historyRecyclerView.visibility = View.VISIBLE // Показать историю поиска
+            clearHistoryButton.visibility = View.VISIBLE // Показать кнопку очистки истории
         }
     }
 }
