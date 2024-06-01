@@ -23,17 +23,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.SHARED_PREFERENCES
+import com.example.playlistmaker.SHARED_PREFERENCES
 import com.example.playlistmaker.data.SearchHistory
-import com.example.playlistmaker.data.dto.TrackResponse
-import com.example.playlistmaker.data.network.ItunesApi
+import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 const val KEY_FOR_HISTORY_LIST = "key_for_history_list"
 const val KEY_FOR_PLAYLIST = "key_for_playlist"
@@ -53,11 +47,7 @@ class SearchActivity : AppCompatActivity() {
     private val searchRunnable = Runnable { search() }
     val tracks = ArrayList<Track>()
     var searchHistory: SearchHistory? = null
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val trackService = retrofit.create(ItunesApi::class.java)
+    private lateinit var tracksInteractor: TracksInteractor
     private val adapter = TrackAdapter {
         clickToTrackList(it)
     }
@@ -84,6 +74,10 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        // Инициализация TracksInteractor
+        tracksInteractor = Creator.provideTracksInteractor(this)
+
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         val sharedPreferences: SharedPreferences =
@@ -236,37 +230,26 @@ class SearchActivity : AppCompatActivity() {
             clearHistoryButton.visibility = View.GONE
             searchedText.visibility = View.GONE
 
-            trackService.search(text = inputEditText.text.toString())
-                .enqueue(object : Callback<TrackResponse> {
-                    override fun onResponse(
-                        call: Call<TrackResponse>,
-                        response: Response<TrackResponse>
-                    ) {
+            tracksInteractor.searchTracks(inputEditText.text.toString(), object : TracksInteractor.TracksConsumer {
+                override fun consume(foundTracks: List<Track>, isFailed: Boolean) {
+                    runOnUiThread {
                         progressBar.visibility = View.GONE
-                        when (response.code()) {
-                            200 -> {
-                                if (response.body()?.tracks?.isNotEmpty() == true) {
-                                    tracks.clear()
-                                    tracks.addAll(response.body()?.tracks!!)
-                                    adapter.notifyDataSetChanged()
-                                    recyclerView.visibility = View.VISIBLE // Показать результаты поиска
-                                    showPlaceholder(null)
-                                } else {
-                                    showPlaceholder(true)
-                                }
-                            }
-
-                            else -> {
-                                showPlaceholder(false, getString(R.string.connect_error))
+                        if (isFailed) {
+                            showPlaceholder(false, getString(R.string.connect_error))
+                        } else {
+                            if (foundTracks.isEmpty()) {
+                                showPlaceholder(true)
+                            } else {
+                                tracks.clear()
+                                tracks.addAll(foundTracks)
+                                adapter.notifyDataSetChanged()
+                                recyclerView.visibility = View.VISIBLE // Показать результаты поиска
+                                showPlaceholder(null)
                             }
                         }
                     }
-
-                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                        progressBar.visibility = View.GONE
-                        showPlaceholder(false, getString(R.string.no_internet))
-                    }
-                })
+                }
+            })
         } else {
             showHistoryWidget()
         }

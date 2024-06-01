@@ -1,10 +1,9 @@
 package com.example.playlistmaker.presentation
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.R
 
 class MainActivity : AppCompatActivity() {
@@ -29,10 +28,5 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-  //  private fun isDarkThemeEnabled(): Boolean {
-  //      val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-  //      return currentNightMode == Configuration.UI_MODE_NIGHT_YES
- //   }
 
 }

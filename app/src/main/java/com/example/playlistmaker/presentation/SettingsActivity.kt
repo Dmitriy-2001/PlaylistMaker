@@ -8,10 +8,10 @@ import android.net.Uri
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textview.MaterialTextView
 import android.content.res.Configuration
-import com.example.playlistmaker.data.App
-import com.example.playlistmaker.data.KEY_FOR_APP_THEME
+import com.example.playlistmaker.App
+import com.example.playlistmaker.KEY_FOR_APP_THEME
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.SHARED_PREFERENCES
+import com.example.playlistmaker.SHARED_PREFERENCES
 
 class SettingsActivity : AppCompatActivity() {
 
