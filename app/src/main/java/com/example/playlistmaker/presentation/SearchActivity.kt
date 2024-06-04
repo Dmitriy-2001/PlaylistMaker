@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -20,21 +21,23 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.SHARED_PREFERENCES
 import com.example.playlistmaker.data.SearchHistory
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
 
 const val KEY_FOR_HISTORY_LIST = "key_for_history_list"
 const val KEY_FOR_PLAYLIST = "key_for_playlist"
 
 class SearchActivity : AppCompatActivity() {
     var textFromSearchWidget = ""
-    private val baseUrl = "https://itunes.apple.com"
 
     companion object {
         const val EDIT_TEXT_VALUE = "EDIT_TEXT_VALUE"
@@ -45,8 +48,8 @@ class SearchActivity : AppCompatActivity() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { search() }
-    val tracks = ArrayList<Track>()
-    var searchHistory: SearchHistory? = null
+    private val tracks = ArrayList<Track>()
+    private var searchHistory: SearchHistory? = null
     private lateinit var tracksInteractor: TracksInteractor
     private val adapter = TrackAdapter {
         clickToTrackList(it)
@@ -78,10 +81,8 @@ class SearchActivity : AppCompatActivity() {
         // Инициализация TracksInteractor
         tracksInteractor = Creator.provideTracksInteractor(this)
 
-        val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        val sharedPreferences: SharedPreferences =
-            getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val sharedPreferences: SharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -158,7 +159,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        // Устанавливаем видимость historyWidget и clearHistoryButton в VISIBLE при создании активности
         showHistoryWidget()
     }
 
@@ -230,26 +230,33 @@ class SearchActivity : AppCompatActivity() {
             clearHistoryButton.visibility = View.GONE
             searchedText.visibility = View.GONE
 
-            tracksInteractor.searchTracks(inputEditText.text.toString(), object : TracksInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>, isFailed: Boolean) {
-                    runOnUiThread {
-                        progressBar.visibility = View.GONE
-                        if (isFailed) {
-                            showPlaceholder(false, getString(R.string.connect_error))
-                        } else {
-                            if (foundTracks.isEmpty()) {
-                                showPlaceholder(true)
+            Log.d("SearchActivity", "Searching for: ${inputEditText.text.toString()}")
+
+            lifecycleScope.launch {
+                tracksInteractor.searchTracks(inputEditText.text.toString(), object : TracksInteractor.TracksConsumer {
+                    override fun consume(foundTracks: List<Track>, isFailed: Boolean) {
+                        runOnUiThread {
+                            progressBar.visibility = View.GONE
+                            if (isFailed) {
+                                Log.d("SearchActivity", "Search failed")
+                                showPlaceholder(false, getString(R.string.connect_error))
                             } else {
-                                tracks.clear()
-                                tracks.addAll(foundTracks)
-                                adapter.notifyDataSetChanged()
-                                recyclerView.visibility = View.VISIBLE // Показать результаты поиска
-                                showPlaceholder(null)
+                                if (foundTracks.isEmpty()) {
+                                    Log.d("SearchActivity", "No tracks found")
+                                    showPlaceholder(true)
+                                } else {
+                                    Log.d("SearchActivity", "Tracks found: $foundTracks")
+                                    tracks.clear()
+                                    tracks.addAll(foundTracks)
+                                    adapter.notifyDataSetChanged()
+                                    recyclerView.visibility = View.VISIBLE
+                                    showPlaceholder(null)
+                                }
                             }
                         }
                     }
-                }
-            })
+                })
+            }
         } else {
             showHistoryWidget()
         }
@@ -275,8 +282,8 @@ class SearchActivity : AppCompatActivity() {
             clearHistoryButton.visibility = View.GONE
         } else {
             historyWidget.visibility = View.VISIBLE
-            historyRecyclerView.visibility = View.VISIBLE // Показать историю поиска
-            clearHistoryButton.visibility = View.VISIBLE // Показать кнопку очистки истории
+            historyRecyclerView.visibility = View.VISIBLE
+            clearHistoryButton.visibility = View.VISIBLE
         }
     }
 }

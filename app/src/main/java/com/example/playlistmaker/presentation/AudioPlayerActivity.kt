@@ -1,4 +1,5 @@
 package com.example.playlistmaker.presentation
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,7 +12,6 @@ import java.util.*
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.media.MediaPlayer
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.models.Track
 

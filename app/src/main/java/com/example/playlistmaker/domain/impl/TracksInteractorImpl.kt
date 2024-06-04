@@ -1,22 +1,31 @@
-package com.example.playlistmaker.domain.impl
+package com.example.playlistmaker.domain.api
 
-import com.example.playlistmaker.domain.models.Resource
-import com.example.playlistmaker.domain.api.TracksInteractor
-import com.example.playlistmaker.domain.api.TracksRepository
-import java.util.concurrent.Executors
+import android.util.Log
+import com.example.playlistmaker.utils.Resource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class TracksInteractorImpl(private val tracksRepository: TracksRepository) : TracksInteractor {
+class TracksInteractorImpl(private val repository: TracksRepository) : TracksInteractor {
 
-    private val executor = Executors.newCachedThreadPool()
-
-    override fun searchTracks(expression: String, tracksConsumer: TracksInteractor.TracksConsumer) {
-        executor.execute {
-            when (val resource = tracksRepository.searchTracks(expression)) {
-                is Resource.Success -> {
-                    tracksConsumer.consume(foundTracks = resource.data ?: emptyList(), isFailed = false)
+    override fun searchTracks(expression: String, consumer: TracksInteractor.TracksConsumer) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val result = repository.searchTracks(expression)
+                withContext(Dispatchers.Main) {
+                    if (result is Resource.Success) {
+                        Log.d("TracksInteractor", "Search successful: ${result.data}")
+                        consumer.consume(result.data, false)
+                    } else {
+                        Log.d("TracksInteractor", "Search failed: ${(result as Resource.Error).message}")
+                        consumer.consume(emptyList(), true)
+                    }
                 }
-                is Resource.Error -> {
-                    tracksConsumer.consume(foundTracks = emptyList(), isFailed = resource.isFailed ?: true)
+            } catch (e: Exception) {
+                Log.e("TracksInteractor", "Search exception: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    consumer.consume(emptyList(), true)
                 }
             }
         }
