@@ -10,7 +10,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -21,17 +20,14 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.SHARED_PREFERENCES
-import com.example.playlistmaker.data.SearchHistory
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
-import kotlinx.coroutines.launch
 
 const val KEY_FOR_HISTORY_LIST = "key_for_history_list"
 const val KEY_FOR_PLAYLIST = "key_for_playlist"
@@ -230,22 +226,18 @@ class SearchActivity : AppCompatActivity() {
             clearHistoryButton.visibility = View.GONE
             searchedText.visibility = View.GONE
 
-            Log.d("SearchActivity", "Searching for: ${inputEditText.text.toString()}")
 
-            lifecycleScope.launch {
+
                 tracksInteractor.searchTracks(inputEditText.text.toString(), object : TracksInteractor.TracksConsumer {
                     override fun consume(foundTracks: List<Track>, isFailed: Boolean) {
                         runOnUiThread {
                             progressBar.visibility = View.GONE
                             if (isFailed) {
-                                Log.d("SearchActivity", "Search failed")
                                 showPlaceholder(false, getString(R.string.connect_error))
                             } else {
                                 if (foundTracks.isEmpty()) {
-                                    Log.d("SearchActivity", "No tracks found")
                                     showPlaceholder(true)
                                 } else {
-                                    Log.d("SearchActivity", "Tracks found: $foundTracks")
                                     tracks.clear()
                                     tracks.addAll(foundTracks)
                                     adapter.notifyDataSetChanged()
@@ -256,7 +248,7 @@ class SearchActivity : AppCompatActivity() {
                         }
                     }
                 })
-            }
+
         } else {
             showHistoryWidget()
         }
