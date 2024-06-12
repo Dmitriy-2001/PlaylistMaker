@@ -1,8 +1,8 @@
 package com.example.playlistmaker.data.mapper
 
-import com.example.playlistmaker.data.dto.TrackDto
-import com.example.playlistmaker.data.dto.TrackResponse
-import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.search.data.dto.TrackDto
+import com.example.playlistmaker.search.data.dto.TrackResponse
+import com.example.playlistmaker.search.domain.models.Track
 
 fun TrackDto.toDomainModel(): Track {
     return Track(

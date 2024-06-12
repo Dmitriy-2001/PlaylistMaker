@@ -1,17 +1,17 @@
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.settings.ui
 
 import android.content.Intent
-import android.os.Bundle
-import com.google.android.material.switchmaterial.SwitchMaterial
-import androidx.appcompat.app.AppCompatActivity
-import android.net.Uri
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.textview.MaterialTextView
 import android.content.res.Configuration
+import android.net.Uri
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.App
 import com.example.playlistmaker.KEY_FOR_APP_THEME
 import com.example.playlistmaker.R
 import com.example.playlistmaker.SHARED_PREFERENCES
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
 

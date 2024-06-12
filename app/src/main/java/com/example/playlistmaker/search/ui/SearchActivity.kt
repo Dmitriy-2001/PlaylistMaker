@@ -1,5 +1,5 @@
 // SearchActivity.kt
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -22,11 +22,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.Creator
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.SHARED_PREFERENCES
-import com.example.playlistmaker.domain.api.TracksInteractor
-import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.search.domain.TracksInteractor
+import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.player.ui.AudioPlayerActivity
+import com.example.playlistmaker.search.data.dto.SearchHistory
 import com.google.gson.Gson
 
 const val KEY_FOR_HISTORY_LIST = "key_for_history_list"

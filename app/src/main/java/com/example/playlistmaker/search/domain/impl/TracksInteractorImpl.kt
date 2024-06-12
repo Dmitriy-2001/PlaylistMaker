@@ -1,5 +1,7 @@
-package com.example.playlistmaker.domain.api
+package com.example.playlistmaker.search.domain.impl
 
+import com.example.playlistmaker.search.data.TracksRepository
+import com.example.playlistmaker.search.domain.TracksInteractor
 import com.example.playlistmaker.utils.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
