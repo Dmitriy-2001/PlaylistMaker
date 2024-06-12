@@ -1,5 +1,5 @@
 // MediaActivity.kt
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

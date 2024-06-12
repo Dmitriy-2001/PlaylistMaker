@@ -1,9 +1,8 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 import android.content.SharedPreferences
-import com.example.playlistmaker.Track
+import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
-
 
 class SearchHistory(val sharedPreferences: SharedPreferences) {
     val historyList: ArrayList<Track> = ArrayList(readFromSH().toList())
@@ -28,7 +27,7 @@ class SearchHistory(val sharedPreferences: SharedPreferences) {
     fun clearHistoryList() {
         historyList.clear()
     }
-    fun writeToSH(historyList: ArrayList<Track>) {
+    fun saveToSH(historyList: ArrayList<Track>) {
         val json = Gson().toJson(historyList)
         sharedPreferences.edit()
             .putString(KEY_FOR_HISTORY_LIST, json)
