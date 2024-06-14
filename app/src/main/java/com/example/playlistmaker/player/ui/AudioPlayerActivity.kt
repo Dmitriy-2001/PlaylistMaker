@@ -1,46 +1,26 @@
 package com.example.playlistmaker.player.ui
-import android.media.MediaPlayer
+
+import android.content.Intent
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.TIRAMISU
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.player.domain.models.PlayerTrack
+import com.example.playlistmaker.player.presentation.PlayerViewModel
+import com.example.playlistmaker.player.presentation.PlayerViewModelFactory
+import com.example.playlistmaker.player.presentation.STATE_PAUSED
+import com.example.playlistmaker.player.presentation.STATE_PLAYING
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.KEY_FOR_PLAYLIST
-import com.google.gson.Gson
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.playlistmaker.search.ui.KEY_FOR_PLAYER
+import java.io.Serializable
 
 class AudioPlayerActivity : AppCompatActivity() {
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
-        private const val UPDATE_TIME_INFO = 500L
-    }
-
-    private var playerState = STATE_DEFAULT
-    private val mediaPlayer = MediaPlayer()
-    private var mainThreadHandler: Handler? = null
-
-    private val cycleRunnable = object : Runnable {
-        override fun run() {
-            val formattedTime =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
-            Log.d("TIME", formattedTime)
-            timing.text = formattedTime
-            mainThreadHandler?.postDelayed(this, UPDATE_TIME_INFO)
-        }
-    }
-
-    private var url: String? = null
 
     private lateinit var backArrow: ImageView
     private lateinit var artworkImage: ImageView
@@ -54,11 +34,11 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var play: ImageView
     private lateinit var timing: TextView
 
+    private lateinit var viewModel: PlayerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_audio_player)
 
-        mainThreadHandler = Handler(Looper.getMainLooper())
         backArrow = findViewById(R.id.back)
         artworkImage = findViewById(R.id.artwork)
         trackName = findViewById(R.id.track_name)
@@ -76,100 +56,89 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         play.setOnClickListener {
-            playbackControl()
+            viewModel.playbackControl()
         }
 
-        val value: String? = intent.getStringExtra(KEY_FOR_PLAYLIST)
-        val track: Track? = Gson().fromJson(value, Track::class.java)
+        val track = intent.getSerializable(KEY_FOR_PLAYER, Track::class.java)
 
-        if (track != null) {
+        viewModel = ViewModelProvider(this, PlayerViewModelFactory(convertTrackToPlayerTrack(track)))[PlayerViewModel::class.java]
 
-            val formattedTime =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime.toLong())
-            val artworkHiResolution = track.artworkUrl.replaceAfterLast('/', "512x512bb.jpg")
-
-            Glide.with(this)
-                .load(artworkHiResolution)
-                .placeholder(R.drawable.placeholder_big)
-                .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.medium_padding)))
-                .into(artworkImage)
-
-            trackName.text = track.trackName
-            artistName.text = track.artistName
-            duration.text = formattedTime
-
-            if (!track.collectionName.isNullOrEmpty()) {
-                collectionName.text = track.collectionName
-            } else {
-                collectionName.text = "n/a"
-            }
-
-            try {
-                year.text = track.releaseDate.split("-", limit = 2)[0]
-            } catch (e: Exception) {
-                year.text = "n/a"
-            }
-
-            genre.text = track.primaryGenreName
-            country.text = track.country
-
-            url = track.previewUrl
-
-            preparePlayer()
+        viewModel.playerTrackForRender.observe(this) { playerTrack ->
+            render(playerTrack)
         }
-    }
-    override fun onPause() {
-        super.onPause()
-        pausePlayer()
-    }
 
-    override fun onDestroy() {
-        mainThreadHandler?.removeCallbacks(cycleRunnable)
-        super.onDestroy()
-        mediaPlayer.release()
-    }
+        viewModel.playerState.observe(this) { statePlaying ->
 
-    private fun preparePlayer() {
-        timing.text = getString(R.string.time)
-        mediaPlayer.apply {
-            setDataSource(url)
-            prepareAsync()
-            setOnPreparedListener {
-                playerState = STATE_PREPARED
+            when (statePlaying) {
+                STATE_PLAYING -> play.setImageResource(R.drawable.pause)
+                STATE_PAUSED -> play.setImageResource(R.drawable.play)
             }
-            setOnCompletionListener {
-                playerState = STATE_PREPARED
+        }
 
-                mainThreadHandler?.removeCallbacks(cycleRunnable)
+        viewModel.isCompleted.observe(this) { isCompleted ->
+            if (isCompleted) {
                 timing.text = getString(R.string.time)
-
                 play.setImageResource(R.drawable.play)
             }
         }
-    }
 
-    private fun startPlayer() {
-        mediaPlayer.start()
-        play.setImageResource(R.drawable.pause)
-        playerState = STATE_PLAYING
-
-        mainThreadHandler?.postDelayed(cycleRunnable, UPDATE_TIME_INFO)
-
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        play.setImageResource(R.drawable.play)
-        playerState = STATE_PAUSED
-
-        mainThreadHandler?.removeCallbacks(cycleRunnable)
-
-    }
-
-    private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> pausePlayer()
-            STATE_PAUSED, STATE_PREPARED -> startPlayer()
+        viewModel.formattedTime.observe(this) { trackTime ->
+            timing.text = trackTime
         }
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.pause()
+    }
+
+    override fun onDestroy() {
+        viewModel.release()
+        super.onDestroy()
+
+    }
+
+    fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): T {
+        return if (SDK_INT >= TIRAMISU)
+            this.getSerializableExtra(key, m_class)!!
+        else
+            this.getSerializableExtra(key) as T
+    }
+    private fun convertTrackToPlayerTrack(track: Track): PlayerTrack {
+        return PlayerTrack(
+            trackId = track.trackId,
+            trackName = track.trackName,
+            artistName = track.artistName,
+            trackTime = track.trackTime,
+            artworkUrl = track.artworkUrl,
+            collectionName = track.collectionName,
+            releaseDate = track.releaseDate,
+            primaryGenreName = track.primaryGenreName,
+            country = track.country,
+            previewUrl = track.previewUrl
+        )
+    }
+
+    private fun render(track: PlayerTrack) {
+        trackName.text = track.trackName
+        artistName.text = track.artistName
+        duration.text = track.trackTime
+
+        if (!track.collectionName.isNullOrEmpty()) {
+            collectionName.text = track.collectionName
+        } else {
+            collectionName.text = getString(R.string.unknown)
+        }
+
+        year.text = track.releaseDate
+        genre.text = track.primaryGenreName
+        country.text = track.country
+
+        Glide.with(this)
+            .load(track.artworkUrl)
+            .placeholder(R.drawable.placeholder_big)
+            .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.two)))
+            .into(artworkImage)
     }
 }

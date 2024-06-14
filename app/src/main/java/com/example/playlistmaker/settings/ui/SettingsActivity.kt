@@ -1,91 +1,82 @@
 package com.example.playlistmaker.settings.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.App
-import com.example.playlistmaker.KEY_FOR_APP_THEME
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.SHARED_PREFERENCES
+import com.example.playlistmaker.settings.presentation.SettingsViewModel
+import com.example.playlistmaker.settings.presentation.SettingsViewModelFactory
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
 
+    private lateinit var backArrowImageView: MaterialToolbar
+    private lateinit var shareButton: MaterialTextView
+    private lateinit var supportButton: MaterialTextView
+    private lateinit var agreementButton: MaterialTextView
+    private lateinit var themeSwitcher: SwitchMaterial
 
+    private lateinit var viewModel: SettingsViewModel
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
-        //Настройка темы
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.switchDarkTheme)
-        if ((applicationContext as App).darkTheme) {
-            themeSwitcher.setChecked(true);
-        }
 
-        themeSwitcher.setOnCheckedChangeListener {switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
-            sharedPreferences.edit()
-                .putBoolean(KEY_FOR_APP_THEME, checked)
-                .apply()
-        }
+        viewModel =
+            ViewModelProvider(this, SettingsViewModelFactory(this))[SettingsViewModel::class.java]
 
-        val toolbar: MaterialToolbar = findViewById(R.id.settings_back_button)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener {
-            finish() // Закрываем текущую активити при нажатии "Назад"
-        }
+        backArrowImageView = findViewById(R.id.settings_back_button)
+        shareButton = findViewById(R.id.shareButton)
+        supportButton = findViewById(R.id.supportButton)
+        agreementButton = findViewById(R.id.agreementButton)
+        themeSwitcher = findViewById(R.id.switchDarkTheme)
 
-        val shareButton: MaterialTextView = findViewById(R.id.shareButton)
+        themeSwitcher.isChecked = viewModel.getThemeState()
+
         shareButton.setOnClickListener {
-            shareApp()
+            val message = viewModel.getLinkToCourse()
+
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, message)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
         }
 
-        val supportButton: MaterialTextView = findViewById(R.id.supportButton)
         supportButton.setOnClickListener {
-            writeToSupport()
+            val message = viewModel.getEmailMessage()
+            val subject = viewModel.getEmailSubject()
+            val mailArray = viewModel.getArrayOfEmailAddresses()
+
+            val shareIntent = Intent(Intent.ACTION_SENDTO)
+            shareIntent.data = Uri.parse("mailto:")
+            shareIntent.putExtra(Intent.EXTRA_EMAIL, mailArray)
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
+            shareIntent.putExtra(Intent.EXTRA_TEXT, message)
+            startActivity(shareIntent)
         }
 
-        val agreementButton: MaterialTextView = findViewById(R.id.agreementButton)
         agreementButton.setOnClickListener {
-            openUserAgreement()
-        }
-    }
+            val url = viewModel.getPracticumOffer()
 
-    private fun shareApp() {
-        val sendIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message))
-            type = "text/plain"
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(browserIntent)
         }
-        startActivity(Intent.createChooser(sendIntent, getString(R.string.share_via)))
-    }
 
-    private fun writeToSupport() {
-        val recipient = getString(R.string.my_mail)
-        val subject = getString(R.string.support_message)
-        val message = getString(R.string.thanks_message)
-        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(recipient))
-            putExtra(Intent.EXTRA_SUBJECT, subject)
-            putExtra(Intent.EXTRA_TEXT, message)
+        backArrowImageView.setOnClickListener {
+            finish()
         }
-        startActivity(emailIntent)
-    }
 
-    private fun openUserAgreement() {
-        val url = getString(R.string.user_agreement_url)
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        startActivity(browserIntent)
-    }
-    private fun isDarkThemeEnabled(): Boolean {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            viewModel.saveAndChangeThemeState(checked)
+        }
     }
 }
-
