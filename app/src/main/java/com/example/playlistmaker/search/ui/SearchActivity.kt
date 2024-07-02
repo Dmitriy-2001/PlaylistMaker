@@ -19,20 +19,20 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.KEY_FOR_PLAYER
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchingViewModel
-import com.example.playlistmaker.search.presentation.SearchingViewModelFactory
 import com.example.playlistmaker.search.ui.models.TracksState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-const val KEY_FOR_PLAYER = "key_for_player"
+
 class SearchActivity : AppCompatActivity() {
     var textFromSearchWidget = ""
-    private lateinit var viewModel: SearchingViewModel
+    private val viewModel by viewModel<SearchingViewModel>()
 
     companion object {
         const val EDIT_TEXT_VALUE = "EDIT_TEXT_VALUE"
@@ -71,8 +71,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
-        viewModel = ViewModelProvider(this, SearchingViewModelFactory(this))[SearchingViewModel::class.java]
 
         viewModel.tracksState.observe(this) { tracksState ->
             render(tracksState)

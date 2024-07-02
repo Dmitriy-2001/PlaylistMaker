@@ -3,7 +3,7 @@ package com.example.playlistmaker.settings.domain.interactors
 import com.example.playlistmaker.settings.domain.interfaces.ThemeStateInteractor
 import com.example.playlistmaker.settings.domain.interfaces.ThemeStateRepository
 
-class ThemeStateInteractorImpl(val themeStateRepository: ThemeStateRepository):
+class ThemeStateInteractorImpl(private val themeStateRepository: ThemeStateRepository):
     ThemeStateInteractor {
 
     override fun getThemeState(): Boolean {

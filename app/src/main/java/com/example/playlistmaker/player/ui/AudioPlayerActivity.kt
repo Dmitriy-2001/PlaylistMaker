@@ -7,17 +7,17 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.KEY_FOR_PLAYER
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.models.PlayerTrack
 import com.example.playlistmaker.player.presentation.PlayerViewModel
-import com.example.playlistmaker.player.presentation.PlayerViewModelFactory
 import com.example.playlistmaker.player.presentation.STATE_PAUSED
 import com.example.playlistmaker.player.presentation.STATE_PLAYING
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.KEY_FOR_PLAYER
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.io.Serializable
 
 class AudioPlayerActivity : AppCompatActivity() {
@@ -34,7 +34,11 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var play: ImageView
     private lateinit var timing: TextView
 
-    private lateinit var viewModel: PlayerViewModel
+    private lateinit var playerTrack: PlayerTrack
+
+    private val viewModel by viewModel<PlayerViewModel> {
+        parametersOf(playerTrack)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.activity_audio_player)
@@ -61,7 +65,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         val track = intent.getSerializable(KEY_FOR_PLAYER, Track::class.java)
 
-        viewModel = ViewModelProvider(this, PlayerViewModelFactory(convertTrackToPlayerTrack(track)))[PlayerViewModel::class.java]
+        playerTrack = convertTrackToPlayerTrack(track)
 
         viewModel.playerTrackForRender.observe(this) { playerTrack ->
             render(playerTrack)
