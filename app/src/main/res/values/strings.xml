@@ -29,4 +29,5 @@
     <string name="release_date">Год</string>
     <string name="genre_name">Жанр</string>
     <string name="country">Страна</string>
+    <string name="unknown">n/a</string>
 </resources>
