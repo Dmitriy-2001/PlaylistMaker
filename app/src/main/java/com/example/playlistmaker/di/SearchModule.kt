@@ -17,6 +17,7 @@ import com.example.playlistmaker.search.domain.interfaces.TrackHistoryInteractor
 import com.example.playlistmaker.search.domain.interfaces.TracksSearchInteractor
 import com.example.playlistmaker.search.domain.interfaces.TracksSearchRepository
 import com.example.playlistmaker.search.presentation.SearchingViewModel
+import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -28,8 +29,12 @@ val searchModule = module {
         androidContext().getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
     }
 
+    single {
+        Gson()
+    }
+
     single<TrackSearchHistoryStorage> {
-        TrackSearchHistoryStorageSharedPrefs(sharedPreferences = get())
+        TrackSearchHistoryStorageSharedPrefs(sharedPreferences = get(), gson = get())
     }
 
     single<HistoryTrackRepositorySH> {
