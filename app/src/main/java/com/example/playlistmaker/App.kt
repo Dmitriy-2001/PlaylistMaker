@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.di.medialibraryModule
 import com.example.playlistmaker.di.playerModule
 import com.example.playlistmaker.di.searchModule
 import com.example.playlistmaker.di.settingsModule
@@ -24,7 +25,7 @@ class App: Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(playerModule, searchModule, settingsModule, sharingModule)
+            modules(playerModule, searchModule, settingsModule, sharingModule, medialibraryModule)
         }
         val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
 

@@ -108,5 +108,16 @@
           <item name="android:fontFamily">@font/ys_display_medium</item>
       </style>
 
+      <style name="MedialibraryTableoutStyle">
+          <item name="tabTextColor">@color/white</item>
+          <item name="tabIndicatorColor">@color/white</item>
+          <item name="android:background">@color/blackYP</item>
+          <item name="textAllCaps">false</item>
+          <item name="android:textAllCaps">false</item>
+      </style>
+
+      <style name="MedialibraryToolbarStyle">
+          <item name="android:background">@color/blackYP</item>
+      </style>
 
 </resources>
