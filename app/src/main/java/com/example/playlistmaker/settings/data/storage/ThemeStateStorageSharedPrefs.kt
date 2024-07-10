@@ -1,13 +1,9 @@
 package com.example.playlistmaker.settings.data.storage
 
-import android.content.Context
+import android.content.SharedPreferences
 import com.example.playlistmaker.KEY_FOR_APP_THEME
-import com.example.playlistmaker.search.data.storage.SHARED_PREFERENCES
 
-class ThemeStateStorageSharedPrefs(context: Context): ThemeStateStorage {
-
-    private val sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
-
+class ThemeStateStorageSharedPrefs(private val sharedPreferences: SharedPreferences): ThemeStateStorage {
     override fun getThemeStateStorage(): Boolean {
         return sharedPreferences.getBoolean(KEY_FOR_APP_THEME, false)
     }

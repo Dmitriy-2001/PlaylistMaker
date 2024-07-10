@@ -3,6 +3,7 @@ package com.example.playlistmaker.settings.presentation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.example.playlistmaker.App
+import com.example.playlistmaker.EMAIL_ADDRESS
 import com.example.playlistmaker.R
 import com.example.playlistmaker.settings.domain.interfaces.ThemeStateInteractor
 import com.example.playlistmaker.sharing.domain.interfaces.StringStorageInteractor
@@ -39,6 +40,6 @@ class SettingsViewModel(
     }
 
     fun getArrayOfEmailAddresses(): Array<String> {
-        return arrayOf("richard.orlov13@gmail.com")
+        return arrayOf(EMAIL_ADDRESS)
     }
 }

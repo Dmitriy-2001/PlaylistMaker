@@ -42,7 +42,7 @@ class PlayerViewModel(
     }
 
     init {
-        preparePlayer()
+        preparePlayer(playerTrack)
         assignValToPlayerTrackForRender()
     }
 
@@ -80,8 +80,9 @@ class PlayerViewModel(
         }
     }
 
-    private fun preparePlayer() {
+    private fun preparePlayer(playerTrack: PlayerTrack) {
         audioPlayerInteractor.prepare(
+            playerTrack = playerTrack,
             callbackPrep = {
                 _playerState.postValue(STATE_PREPARED)
             },

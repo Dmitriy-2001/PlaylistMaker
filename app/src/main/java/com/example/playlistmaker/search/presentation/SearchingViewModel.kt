@@ -37,8 +37,7 @@ class SearchingViewModel(
     }
 
     private fun assignListToHistoryList() {
-        val hList = getHistoryList()
-        _historyList.postValue(hList)
+        _historyList.postValue(getHistoryList())
     }
 
     fun getHistoryList(): ArrayList<Track> {
@@ -47,8 +46,7 @@ class SearchingViewModel(
 
     fun clearHistoryList() {
         trackHistoryInteractor.clearHistoryList()
-        val hList = getHistoryList()
-        _historyList.postValue(hList)
+        _historyList.postValue(getHistoryList())
     }
 
     fun saveHistoryList() {
@@ -57,8 +55,7 @@ class SearchingViewModel(
 
     fun addTrackToHistoryList(track: Track) {
         trackHistoryInteractor.addTrackToHistoryList(track)
-        val hList = getHistoryList()
-        _historyList.postValue(hList)
+        _historyList.postValue(getHistoryList())
     }
 
     fun transferTrackToTop(track: Track) {
