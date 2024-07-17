@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".search.ui.SearchActivity"
+    tools:context=".search.ui.SearchFragment"
     android:background="?attr/whiteBlack"
    >
 
@@ -13,13 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-
-        <ImageView
-            android:id="@+id/backArrowImageView"
-            style="@style/ImageViewToolbarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/arrow_back" />
 
         <TextView
             android:id="@+id/settingsTextView"

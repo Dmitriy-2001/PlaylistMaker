@@ -120,4 +120,10 @@
           <item name="android:background">@color/blackYP</item>
       </style>
 
+      <style name="BottomMenuStyle">
+          <item name="itemIconTint">@color/white</item>
+          <item name="itemTextColor">@color/white</item>
+          <item name="background">@color/blackYP</item>
+      </style>
+
 </resources>

@@ -1,9 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:theme="@style/Settings">
+    android:theme="@style/Settings"
+    tools:context=".settings.ui.SettingFragment">
 
     <!-- Ваша Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
@@ -11,12 +13,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="@string/settings"
-        app:navigationIcon="@drawable/arrow_back"
          />
 
     <!-- Ваш SwitchMaterial -->
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchDarkTheme"
+        android:id="@+id/themeSwitcher"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="@string/dark_theme"

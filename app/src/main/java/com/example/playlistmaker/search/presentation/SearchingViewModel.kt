@@ -76,6 +76,16 @@ class SearchingViewModel(
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
+    fun refreshTrackState() {
+        _tracksState.postValue(
+            TracksState(
+                tracks = emptyList(),
+                isLoading = false,
+                isFailed = null
+            )
+        )
+    }
+
     fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
 

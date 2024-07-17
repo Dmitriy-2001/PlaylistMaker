@@ -9,7 +9,9 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -18,20 +20,29 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.KEY_FOR_PLAYER
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
+import com.example.playlistmaker.root.listeners.BottomNavigationListener
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchingViewModel
 import com.example.playlistmaker.search.ui.models.TracksState
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class SearchActivity : AppCompatActivity() {
-    var textFromSearchWidget = ""
+class SearchFragment: Fragment() {
+    private var bottomNavigationListener: BottomNavigationListener? = null
+
+    private var _binding: FragmentSearchBinding?=null
+    private val binding get() = _binding!!
+
+    private var textFromSearchWidget = ""
     private val viewModel by viewModel<SearchingViewModel>()
 
     companion object {
@@ -56,7 +67,6 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var inputEditText: EditText
     private lateinit var clearButton: ImageView
-    private lateinit var backArrowImageView: ImageView
     private lateinit var recyclerView: RecyclerView
     private lateinit var notFoundWidget: LinearLayout
     private lateinit var badConnectionWidget: LinearLayout
@@ -67,40 +77,63 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearHistoryButton: Button
     private lateinit var progressBar: ProgressBar
 
-    @SuppressLint("MissingInflatedId", "NotifyDataSetChanged")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is BottomNavigationListener) {
+            bottomNavigationListener = context
+        } else {
+            throw IllegalArgumentException("")
+        }
+    }
 
-        viewModel.tracksState.observe(this) { tracksState ->
+    override fun onDetach() {
+        super.onDetach()
+        bottomNavigationListener = null
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        inputEditText = binding.inputEditText
+        clearButton = binding.clearIcon
+        notFoundWidget = binding.notFoundWidget
+        badConnectionWidget = binding.badConnectionWidget
+        updateButton = binding.updateButton
+        badConnectionTextView = binding.badConnection
+        historyWidget = binding.historyWidget
+        clearHistoryButton = binding.clearHistoryButton
+        progressBar = binding.progressBar
+
+        if (savedInstanceState != null) {
+            inputEditText.setText(savedInstanceState.getString(EDIT_TEXT_VALUE, ""))
+        }
+
+        viewModel.tracksState.observe(viewLifecycleOwner) { tracksState ->
             render(tracksState)
         }
 
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        recyclerView = findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        val inputMethodManager =   requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        recyclerView =  binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        historyRecyclerView = findViewById(R.id.history_recycle_view)
-        historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        historyRecyclerView = binding.historyRecycleView
+        historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         historyRecyclerView.adapter = historyAdapter
 
-        viewModel.historyList.observe(this) { historyList ->
+        viewModel.historyList.observe(viewLifecycleOwner) { historyList ->
             historyAdapter.tracks = historyList
             historyAdapter.notifyDataSetChanged()
             showHistoryWidget()
         }
-
-        inputEditText = findViewById(R.id.inputEditText)
-        clearButton = findViewById(R.id.clearIcon)
-        backArrowImageView = findViewById(R.id.backArrowImageView)
-        notFoundWidget = findViewById(R.id.not_found_widget)
-        badConnectionWidget = findViewById(R.id.bad_connection_widget)
-        updateButton = findViewById(R.id.update_button)
-        badConnectionTextView = findViewById(R.id.bad_connection)
-        historyWidget = findViewById(R.id.history_widget)
-        clearHistoryButton = findViewById(R.id.clear_history_button)
-        progressBar = findViewById(R.id.progressBar)
 
         clearHistoryButton.setOnClickListener {
             viewModel.clearHistoryList()
@@ -129,9 +162,6 @@ class SearchActivity : AppCompatActivity() {
             viewModel.searchRequest(inputEditText.text.toString())
         }
 
-        backArrowImageView.setOnClickListener {
-            finish()
-        }
 
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -163,6 +193,19 @@ class SearchActivity : AppCompatActivity() {
             }
             false
         }
+        KeyboardVisibilityEvent.setEventListener(
+            activity = requireActivity(),
+            lifecycleOwner = viewLifecycleOwner,
+            object : KeyboardVisibilityEventListener {
+                override fun onVisibilityChanged(isOpen: Boolean) {
+                    if (isOpen) {
+                        onKeyboardVisibilityChanged(true)
+                    } else {
+                        onKeyboardVisibilityChanged(false)
+                    }
+                }
+            }
+        )
     }
 
     override fun onStop() {
@@ -170,20 +213,25 @@ class SearchActivity : AppCompatActivity() {
         viewModel.saveHistoryList()
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         viewModel.onDestroy()
-        super.onDestroy()
+        super.onDestroyView()
+        _binding = null
     }
+    override fun onPause() {
+        super.onPause()
+        if (inputEditText.text.toString().isEmpty()) {
+            viewModel.refreshTrackState()
+        }
+    }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_TEXT_VALUE, textFromSearchWidget)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        inputEditText.setText(savedInstanceState.getString(EDIT_TEXT_VALUE, ""))
-    }
+
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -196,7 +244,7 @@ class SearchActivity : AppCompatActivity() {
     private fun clickToTrackList(track: Track) {
         viewModel.addTrackToHistoryList(track)
 
-        val intent = Intent(this, AudioPlayerActivity::class.java)
+        val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
         intent.putExtra(KEY_FOR_PLAYER, track)
         startActivity(intent)
     }
@@ -204,7 +252,7 @@ class SearchActivity : AppCompatActivity() {
     private fun clickToHistoryTrackList(track: Track) {
         viewModel.transferTrackToTop(track)
 
-        val intent = Intent(this, AudioPlayerActivity::class.java)
+        val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
         intent.putExtra(KEY_FOR_PLAYER, track)
         startActivity(intent)
     }
@@ -275,5 +323,11 @@ class SearchActivity : AppCompatActivity() {
             historyWidget.visibility = View.GONE
         }
     }
-
+    private fun onKeyboardVisibilityChanged(isVisible: Boolean) {
+        if (isVisible) {
+            bottomNavigationListener?.toggleBottomNavigationViewVisibility(false)
+        } else {
+            bottomNavigationListener?.toggleBottomNavigationViewVisibility(true)
+        }
+    }
 }
