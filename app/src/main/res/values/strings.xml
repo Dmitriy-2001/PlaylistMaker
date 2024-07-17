@@ -3,6 +3,7 @@
     <string name="search">Поиск</string>
     <string name="media">Медиатека</string>
     <string name="settings">Настройки</string>
+
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="write_to_support">Написать в поддержку</string>
     <string name="share_the_app">Поделиться приложением</string>
@@ -14,6 +15,7 @@
     <string name="my_mail">richard.orlov13@gmail.com</string>
     <string name="share_via">Share via</string>
     <string name="my_email">richard.orlov13@gmail.com</string>
+
     <string name="reload">Обновить</string>
     <string name="no_data_found">Ничего не нашлось</string>
     <string name="connect_error">Проблемы с сервером</string>
@@ -30,4 +32,10 @@
     <string name="genre_name">Жанр</string>
     <string name="country">Страна</string>
     <string name="unknown">n/a</string>
+
+    <string name="empty_medialibrary">Ваша медиатека пуста</string>
+    <string name="not_create_playlist">Вы не создали \n ни одного плейлиста</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="favourites_tracks">Избранные треки</string>
+    <string name="playlists">Плейлисты</string>
 </resources>
