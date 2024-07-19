@@ -110,9 +110,12 @@
     </style>
 
     <style name="BottomMenuStyle">
-        <item name="itemIconTint">@color/blackYP</item>
-        <item name="itemTextColor">@color/blackYP</item>
+        <item name="itemIconTint">@color/bottom_navigation_colors</item>
+        <item name="itemTextColor">@color/bottom_navigation_colors</item>
         <item name="background">@color/white</item>
+        <item name="alpha">1.0</item>
+        <item name="itemActiveIndicatorStyle">@android:color/transparent</item>
+        <item name="itemIconSize">30dp</item>
     </style>
 
 </resources>

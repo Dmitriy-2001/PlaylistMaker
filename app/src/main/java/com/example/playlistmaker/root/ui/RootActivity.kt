@@ -1,8 +1,8 @@
 package com.example.playlistmaker.root.ui
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
@@ -26,10 +26,6 @@ class RootActivity: AppCompatActivity(), BottomNavigationListener {
     }
 
     override fun toggleBottomNavigationViewVisibility(visible: Boolean) {
-        if (visible) {
-            bottomNavigationView.visibility = View.VISIBLE
-        } else {
-            bottomNavigationView.visibility = View.GONE
-        }
+        bottomNavigationView.isVisible = visible
     }
 }

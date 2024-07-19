@@ -114,14 +114,15 @@ class SearchFragment: Fragment() {
 
         if (savedInstanceState != null) {
             inputEditText.setText(savedInstanceState.getString(EDIT_TEXT_VALUE, ""))
+            textFromSearchWidget = savedInstanceState.getString(EDIT_TEXT_VALUE, "")
         }
 
         viewModel.tracksState.observe(viewLifecycleOwner) { tracksState ->
             render(tracksState)
         }
 
-        val inputMethodManager =   requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        recyclerView =  binding.recyclerView
+        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
@@ -162,7 +163,6 @@ class SearchFragment: Fragment() {
             viewModel.searchRequest(inputEditText.text.toString())
         }
 
-
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
@@ -193,6 +193,7 @@ class SearchFragment: Fragment() {
             }
             false
         }
+
         KeyboardVisibilityEvent.setEventListener(
             activity = requireActivity(),
             lifecycleOwner = viewLifecycleOwner,
@@ -206,7 +207,13 @@ class SearchFragment: Fragment() {
                 }
             }
         )
+
+        // Refresh track state if input is empty
+        if (inputEditText.text.toString().isEmpty()) {
+            viewModel.refreshTrackState()
+        }
     }
+
 
     override fun onStop() {
         super.onStop()
@@ -223,7 +230,9 @@ class SearchFragment: Fragment() {
         if (inputEditText.text.toString().isEmpty()) {
             viewModel.refreshTrackState()
         }
+        textFromSearchWidget = inputEditText.text.toString() // Сохранение текста поиска
     }
+
 
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -298,7 +307,7 @@ class SearchFragment: Fragment() {
                         else -> showPlaceholder(false, getString(R.string.no_internet))
                     }
                 } else {
-                    if (tracksState.tracks.isEmpty()) {
+                    if (tracksState.tracks.isEmpty() && textFromSearchWidget.isNotEmpty()) {
                         showPlaceholder(true)
                     } else {
                         adapter.tracks.clear()
@@ -311,6 +320,7 @@ class SearchFragment: Fragment() {
         }
         showHistoryWidget()
     }
+
 
     private fun showLoading(isLoaded: Boolean) {
         progressBar.visibility = if (isLoaded) View.VISIBLE else View.GONE
