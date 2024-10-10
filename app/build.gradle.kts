@@ -66,4 +66,10 @@ dependencies {
     implementation ("androidx.fragment:fragment-ktx:1.8.1")
     // Viewpager
     implementation ("androidx.viewpager2:viewpager2:1.1.0")
+    // Jetpack Navigation Component
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
+    implementation ("androidx.fragment:fragment-ktx:1.8.1")
+
+    implementation ("net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:3.0.0-RC3")
 }

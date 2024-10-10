@@ -12,7 +12,7 @@ import com.example.playlistmaker.search.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TrackAdapter(val clickListener: TrackClickListener): RecyclerView.Adapter<TrackAdapter.TrackHolder>() {
+class TrackAdapter(private val clickListener: TrackClickListener): RecyclerView.Adapter<TrackAdapter.TrackHolder>() {
     var tracks = ArrayList<Track>()
     fun interface TrackClickListener {
         fun onTrackClick(track: Track)

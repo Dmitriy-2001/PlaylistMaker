@@ -37,4 +37,5 @@
 
     <dimen name="large_padding">24dp</dimen>
     <dimen name="layout_margin_start_textview_toolbar">28dp</dimen>
+    <dimen name="keyboard_visible_threshold">100dp</dimen>
 </resources>

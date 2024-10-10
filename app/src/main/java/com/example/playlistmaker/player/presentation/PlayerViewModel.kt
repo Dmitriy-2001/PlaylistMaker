@@ -55,7 +55,7 @@ class PlayerViewModel(
         _playerTrack.postValue(playerTrackTo)
     }
 
-    fun play() {
+    private fun play() {
         audioPlayerInteractor.play()
         _playerState.postValue(STATE_PLAYING)
         mainThreadHandler.postDelayed(cycleRunnable, UPDATE_TIME_INFO_MS)

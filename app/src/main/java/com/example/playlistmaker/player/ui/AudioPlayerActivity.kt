@@ -36,7 +36,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var playerTrack: PlayerTrack
 
-    private val viewModel by viewModel<PlayerViewModel> {
+    private val viewModel: PlayerViewModel by viewModel {
         parametersOf(playerTrack)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
