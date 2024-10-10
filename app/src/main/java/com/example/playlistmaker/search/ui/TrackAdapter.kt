@@ -26,10 +26,10 @@ class TrackAdapter(private val clickListener: TrackClickListener): RecyclerView.
         private var trackTime = itemView.findViewById<TextView>(R.id.trackTime)
 
         fun bind(track: Track) {
-            val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime.toLong())
+            val formattedTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime?.toLong())
 
             Glide.with(itemView)
-                .load(track.artworkUrl)
+                .load(track.artworkUrl100)
                 .placeholder(R.drawable.placeholder)
                 .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.two)))
                 .into(artwork)

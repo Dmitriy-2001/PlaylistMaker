@@ -5,8 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -21,6 +19,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.KEY_FOR_PLAYER
@@ -31,6 +30,8 @@ import com.example.playlistmaker.root.listeners.BottomNavigationListener
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchingViewModel
 import com.example.playlistmaker.search.ui.models.TracksState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -50,7 +51,6 @@ class SearchFragment: Fragment() {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
-    private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
 
     private val adapter = TrackAdapter {
@@ -289,7 +289,10 @@ class SearchFragment: Fragment() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
 
         return current
@@ -307,11 +310,14 @@ class SearchFragment: Fragment() {
                         else -> showPlaceholder(false, getString(R.string.no_internet))
                     }
                 } else {
-                    if (tracksState.tracks.isEmpty() && textFromSearchWidget.isNotEmpty()) {
+                    if (tracksState.tracks?.isEmpty() == true && textFromSearchWidget.isNotEmpty()) {
                         showPlaceholder(true)
                     } else {
                         adapter.tracks.clear()
-                        adapter.tracks.addAll(tracksState.tracks)
+                        // Добавляем проверку на null
+                        tracksState.tracks?.let {
+                            adapter.tracks.addAll(it)
+                        }
                         adapter.notifyDataSetChanged()
                         showPlaceholder(null)
                     }

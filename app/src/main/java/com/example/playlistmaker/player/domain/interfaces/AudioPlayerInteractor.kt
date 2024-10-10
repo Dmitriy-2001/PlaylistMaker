@@ -1,13 +1,17 @@
 package com.example.playlistmaker.player.domain.interfaces
 
-import com.example.playlistmaker.player.domain.models.PlayerTrack
+import android.media.MediaPlayer
 
 interface AudioPlayerInteractor {
 
-    fun play()
+    fun start()
     fun pause()
     fun release()
-    fun getCurrentPos(): Int
-    fun prepare(playerTrack: PlayerTrack, callbackPrep: () -> Unit, callbackComp: () -> Unit)
+    fun preparePlayer()
 
+    fun currentPosition(): String
+    fun setOnPreparedListener(listener: MediaPlayer.OnPreparedListener)
+    fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener)
+    fun setDataSource(url: String?)
+    fun isPlaying(): Boolean
 }
