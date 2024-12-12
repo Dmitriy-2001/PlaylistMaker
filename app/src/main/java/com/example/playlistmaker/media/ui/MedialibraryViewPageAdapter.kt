@@ -13,6 +13,6 @@ class MedialibraryViewPageAdapter(fragmentManager: FragmentManager, lifecycle: L
     }
 
     override fun createFragment(position: Int): Fragment {
-        return if (position == 0) MedialibraryFavouritesFragment.newInstance() else MedialibraryPlaylistsFragment.newInstance()
+        return if (position == 0) FavoriteTracksFragment.newInstance() else MedialibraryPlaylistsFragment.newInstance()
     }
 }

@@ -1,6 +1,6 @@
-package com.example.playlistmaker.di
+package com.example.playlistmaker.media.di
 
-import com.example.playlistmaker.media.presentation.MedialibraryFavouritesViewModel
+import com.example.playlistmaker.media.presentation.FavoriteTracksViewModel
 import com.example.playlistmaker.media.presentation.MedialibraryPlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -8,7 +8,7 @@ import org.koin.dsl.module
 val medialibraryModule = module {
 
     viewModel {
-        MedialibraryFavouritesViewModel()
+        FavoriteTracksViewModel(get())
     }
 
     viewModel {

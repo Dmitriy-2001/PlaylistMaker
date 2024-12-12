@@ -22,7 +22,11 @@ val playerModule = module {
     }
 
     viewModel { (track: Track) ->
-        PlayerViewModel(track = track, audioPlayerInteractor = get())
+        PlayerViewModel(
+            track = track,
+            audioPlayerInteractor = get(),
+            favoriteTracksRepository = get()
+        )
     }
 
 }

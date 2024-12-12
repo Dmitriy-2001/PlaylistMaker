@@ -20,13 +20,14 @@ import org.koin.core.parameter.parametersOf
 import java.io.Serializable
 
 private const val CORNERRADIUS_DP = 8f
-private const val TIME = "time"                     // Тег для сохранения позиции таймера
+private const val TIME = "time"   // Тег для сохранения позиции таймера
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var playerState: PlayerState
     private lateinit var currentTime: String
     private lateinit var viewModel: PlayerViewModel
     private lateinit var binding: ActivityAudioPlayerBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,30 +37,54 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         val vModel: PlayerViewModel by viewModel { parametersOf(track) }
         viewModel = vModel
-        if(savedInstanceState != null) {
+
+        if (savedInstanceState != null) {
             currentTime = savedInstanceState.getString(TIME, getString(R.string.time))
             binding.timing.text = currentTime
         }
-        screenPreparation(track)    // Заполнение экрана
+
+        screenPreparation(track) // Заполнение экрана
 
         // Нажатие кнопки Назад закрывает AudioPlayer
         binding.back.setOnClickListener {
             finish()
         }
+
         // Реакция на нажатие кнопки Play
         binding.play.setOnClickListener {
             viewModel.changeStatePlayerAfterClick()
         }
+
+        // Реакция на нажатие кнопки Избранное
+        binding.favorite.setOnClickListener {
+            viewModel.toggleFavorite()
+        }
+
         // Получение данных от PlayerViewModel
-        viewModel.getStatePlayerLiveData().observe(this) { newState ->
+        viewModel.playerStateLiveData.observe(this) { newState ->
             playerState = newState
             playbackControl()
         }
+
+        viewModel.trackLiveData.observe(this) { track ->
+            track?.let { updateFavoriteButton(it.isFavorite) }
+        }
     }
+
     private fun playbackControl() {
         binding.play.isEnabled = playerState.isPlayButtonEnabled
-        binding.play.setImageResource(if(playerState.buttonIcon == "PLAY") R.drawable.play else R.drawable.pause)
+        binding.play.setImageResource(
+            if (playerState.buttonIcon == "PLAY") R.drawable.play else R.drawable.pause
+        )
         playerState.progress.also { binding.timing.text = it }
+    }
+
+    private fun updateFavoriteButton(isFavorite: Boolean) {
+        if (isFavorite) {
+            binding.favorite.setImageResource(R.drawable.like_2)
+        } else {
+            binding.favorite.setImageResource(R.drawable.like)
+        }
     }
 
     fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): T {
@@ -68,6 +93,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         else
             this.getSerializableExtra(key) as T
     }
+
     private fun screenPreparation(track: Track?) {
         // Выводим обложку альбома
         Glide.with(this)
@@ -85,27 +111,26 @@ class AudioPlayerActivity : AppCompatActivity() {
             )
             .into(binding.artwork)
 
-
         // Заполняем поля:
-        binding.trackName.text = track?.trackName                        // Назввание трека
-        binding.artistName.text = track?.artistName                      // Имя исполнителя
-        binding.timing.text = track?.trackTime                         // Продолжительность трека
+        binding.trackName.text = track?.trackName // Название трека
+        binding.artistName.text = track?.artistName // Имя исполнителя
+        binding.timing.text = track?.trackTime // Продолжительность трека
         if (track?.collectionName?.isNotEmpty() == true) {
-            binding.collectionName.text = track.collectionName           // Название альбома
+            binding.collectionName.text = track.collectionName // Название альбома
         } else {
             noCollectionName()
         }
-        binding.yearName.text = track?.releaseDate?.subSequence(0,4)  // Год выхода (первые 4-е символа строки)
-        binding.genreName.text = track?.primaryGenreName          // Жанр трека
-        binding.countryName.text = track?.country                            // Страна исполнителя
-        binding.play.isEnabled = false                             // При загрузке делаем кнопку Play недоступной до инициализации плейера
+        binding.yearName.text = track?.releaseDate?.subSequence(0, 4) // Год выхода (первые 4-е символа строки)
+        binding.genreName.text = track?.primaryGenreName // Жанр трека
+        binding.countryName.text = track?.country // Страна исполнителя
+        binding.play.isEnabled = false // При загрузке делаем кнопку Play недоступной до инициализации плейера
     }
+
     // Если имя альбома пустое
-    private fun noCollectionName (){
+    private fun noCollectionName() {
         binding.collectionName.isVisible = false
-
-
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TIME, binding.timing.text.toString())

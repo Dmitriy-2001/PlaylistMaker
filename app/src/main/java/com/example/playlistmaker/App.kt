@@ -2,11 +2,14 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.di.medialibraryModule
+import com.example.playlistmaker.media.di.medialibraryModule
 import com.example.playlistmaker.di.playerModule
 import com.example.playlistmaker.di.searchModule
 import com.example.playlistmaker.di.settingsModule
 import com.example.playlistmaker.di.sharingModule
+import com.example.playlistmaker.media.di.dataModule
+import com.example.playlistmaker.media.di.presentationModule
+import com.example.playlistmaker.media.di.repositoryModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -25,7 +28,7 @@ class App: Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(playerModule, searchModule, settingsModule, sharingModule, medialibraryModule)
+            modules(playerModule, searchModule, settingsModule, sharingModule, medialibraryModule, dataModule, repositoryModule, presentationModule)
         }
         val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE)
 
