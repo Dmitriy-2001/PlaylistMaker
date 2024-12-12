@@ -1,103 +1,96 @@
 package com.example.playlistmaker.player.presentation
 
-import android.os.Handler
-import android.os.Looper
+import android.media.MediaPlayer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.interfaces.AudioPlayerInteractor
-import com.example.playlistmaker.player.domain.models.PlayerTrack
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-const val STATE_DEFAULT = 0
-const val STATE_PREPARED = 1
-const val STATE_PLAYING = 2
-const val STATE_PAUSED = 3
+
+private const val REFRESH_PROGRESS_DELAY = 300L
 
 class PlayerViewModel(
-    private val playerTrack: PlayerTrack,
-    private val audioPlayerInteractor: AudioPlayerInteractor
+
+    private val audioPlayerInteractor: AudioPlayerInteractor,
+    track: Track?
 ): ViewModel() {
 
-    private val _playerTrack = MutableLiveData<PlayerTrack>()
-    val playerTrackForRender: LiveData<PlayerTrack> = _playerTrack
+    private var timerJob: Job? = null
 
+    private var statePlayerLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
 
-    private val mainThreadHandler = Handler(Looper.getMainLooper())
-
-    private val _isCompleted = MutableLiveData(false)
-    val isCompleted: LiveData<Boolean> = _isCompleted
-
-    private val _playerState = MutableLiveData(STATE_DEFAULT)
-    val playerState: LiveData<Int> = _playerState
-
-    private val _formattedTime =  MutableLiveData("00:00")
-    val formattedTime: LiveData<String> = _formattedTime
-    private val cycleRunnable = object: Runnable {
-        override fun run() {
-            _formattedTime.postValue(getTimeFormat(audioPlayerInteractor.getCurrentPos().toLong()))
-            mainThreadHandler.postDelayed(this, UPDATE_TIME_INFO_MS)
-        }
-    }
+    // Получение состояния плеера
+    fun getStatePlayerLiveData(): LiveData<PlayerState> = statePlayerLiveData
 
     init {
-        preparePlayer(playerTrack)
-        assignValToPlayerTrackForRender()
-    }
-
-    private fun assignValToPlayerTrackForRender() {
-        val playerTrackTo = playerTrack.copy(
-            artworkUrl = playerTrack.artworkUrl.replaceAfterLast('/', "512x512bb.jpg"),
-            releaseDate = playerTrack.releaseDate.split("-", limit = 2)[0],
-            trackTime = getTimeFormat(playerTrack.trackTime.toLong())
-        )
-        _playerTrack.postValue(playerTrackTo)
-    }
-
-    private fun play() {
-        audioPlayerInteractor.play()
-        _playerState.postValue(STATE_PLAYING)
-        mainThreadHandler.postDelayed(cycleRunnable, UPDATE_TIME_INFO_MS)
-        _isCompleted.postValue(false)
-    }
-
-    fun pause() {
-        audioPlayerInteractor.pause()
-        _playerState.postValue(STATE_PAUSED)
-        mainThreadHandler.removeCallbacks(cycleRunnable)
-    }
-
-    fun release() {
-        audioPlayerInteractor.release()
-        mainThreadHandler.removeCallbacks(cycleRunnable)
-    }
-
-    fun playbackControl() {
-        when (_playerState.value) {
-            STATE_PLAYING -> pause()
-            STATE_PAUSED, STATE_PREPARED -> play()
+        setDataSource(track?.previewUrl)
+        preparePlayer()
+        setOnPreparedListener {
+            statePlayerLiveData.postValue(PlayerState.Prepared())
+        }
+        setOnCompletionListener {
+            statePlayerLiveData.postValue(PlayerState.Prepared())
         }
     }
+    // Изменение состояния плеера после клика Play
+    fun changeStatePlayerAfterClick () {
+        when (statePlayerLiveData.value) {
+            is PlayerState.Playing -> pause()
+            is PlayerState.Paused, is PlayerState.Prepared -> start()
+            else -> {}
+        }
+    }
+    // Плеер
 
-    private fun preparePlayer(playerTrack: PlayerTrack) {
-        audioPlayerInteractor.prepare(
-            playerTrack = playerTrack,
-            callbackPrep = {
-                _playerState.postValue(STATE_PREPARED)
-            },
-            callbackComp = {
-                _playerState.postValue(STATE_PREPARED)
-                mainThreadHandler.removeCallbacks(cycleRunnable)
-                _isCompleted.postValue(true)
-            }
-        )
+    private fun setDataSource(url: String?) {
+        audioPlayerInteractor.setDataSource(url)
+    }
+    private fun preparePlayer() {
+        audioPlayerInteractor.preparePlayer()
+    }
+    private fun start() {
+        audioPlayerInteractor.start()
+        statePlayerLiveData.postValue(PlayerState.Playing(currentPosition()))
+        startTimer()
+    }
+    fun pause() {
+        audioPlayerInteractor.pause()
+        timerJob?.cancel()
+        statePlayerLiveData.postValue(PlayerState.Paused(currentPosition()))
     }
 
-    fun getTimeFormat(value: Long): String =
-        SimpleDateFormat("mm:ss", Locale.getDefault()).format(value)
-
-    companion object {
-        private const val UPDATE_TIME_INFO_MS = 300L
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (isPlaying()) {
+                delay(REFRESH_PROGRESS_DELAY)
+                if (statePlayerLiveData.value is PlayerState.Playing) {
+                    statePlayerLiveData.postValue(PlayerState.Playing(currentPosition()))
+                }
+            }
+        }
+    }
+    private fun currentPosition(): String {
+        return audioPlayerInteractor.currentPosition()
+    }
+    private fun setOnPreparedListener(listener: MediaPlayer.OnPreparedListener) {
+        audioPlayerInteractor.setOnPreparedListener(listener)
+    }
+    private fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
+        audioPlayerInteractor.setOnCompletionListener(listener)
+    }
+    private fun isPlaying (): Boolean {
+        return audioPlayerInteractor.isPlaying()
+    }
+    private fun release () {
+        audioPlayerInteractor.release()
+    }
+    override fun onCleared() {
+        super.onCleared()
+        release()
     }
 }

@@ -1,19 +1,23 @@
 package com.example.playlistmaker.search.presentation
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.interfaces.TrackHistoryInteractor
 import com.example.playlistmaker.search.domain.interfaces.TracksSearchInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.models.TracksState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 class SearchingViewModel(
     private val tracksSearchInteractor: TracksSearchInteractor,
     private val trackHistoryInteractor: TrackHistoryInteractor
 ): ViewModel() {
+
+    private var searchJob: Job? = null
 
     private val _historyList = MutableLiveData<ArrayList<Track>>()
     val historyList: LiveData<ArrayList<Track>> = _historyList
@@ -29,12 +33,6 @@ class SearchingViewModel(
 
     private val tracks = ArrayList<Track>()
 
-    private val handler = Handler(Looper.getMainLooper())
-
-    private val searchRunnable = Runnable {
-        val newSearchText = lastSearchText ?: ""
-        searchRequest(newSearchText)
-    }
 
     private fun assignListToHistoryList() {
         _historyList.postValue(getHistoryList())
@@ -66,14 +64,23 @@ class SearchingViewModel(
     }
 
     fun onDestroy() {
-        handler.removeCallbacks(searchRunnable)
+        searchJob?.cancel()
     }
 
     fun searchDebounce(changedText: String) {
 
-        this.lastSearchText = changedText
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        if (lastSearchText == changedText) {
+            return
+        }
+
+        lastSearchText = changedText
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(lastSearchText!!)
+        }
+
     }
 
     fun refreshTrackState() {
@@ -85,69 +92,59 @@ class SearchingViewModel(
             )
         )
     }
-
     fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
 
             _tracksState.postValue(
                 TracksState(
-                    tracks = tracks,
+                    tracks = null,
                     isLoading = true,
                     isFailed = null
                 )
             )
 
-            tracksSearchInteractor.searchTracks(
-                newSearchText,
-                object : TracksSearchInteractor.TracksConsumer {
-                    override fun consume(foundTracks: List<Track>?, isFailed: Boolean?) {
-
-                        handler.post {
-
-                            if (foundTracks != null) {
-                                tracks.clear()
-                                tracks.addAll(foundTracks)
-                            }
-
-
-                            if (isFailed != null) {
+            viewModelScope.launch {
+                tracksSearchInteractor
+                    .searchTracks(newSearchText)
+                    .collect { pair ->
+                        if (pair.first != null) {
+                            tracks.clear()
+                            tracks.addAll(pair.first!!)
+                        }
+                        if (pair.second != null) {
+                            _tracksState.postValue(
+                                TracksState(
+                                    tracks = emptyList(),
+                                    isLoading = false,
+                                    isFailed = pair.second
+                                )
+                            )
+                        } else {
+                            if (tracks.isEmpty()) {
 
                                 _tracksState.postValue(
                                     TracksState(
                                         tracks = emptyList(),
                                         isLoading = false,
-                                        isFailed = isFailed
+                                        isFailed = null
                                     )
                                 )
 
-                            } else {
-
-                                if (tracks.isEmpty()) {
-                                    _tracksState.postValue(
-                                        TracksState(
-                                            tracks = emptyList(),
-                                            isLoading = false,
-                                            isFailed = null
-                                        )
+                            }  else {
+                                _tracksState.postValue(
+                                    TracksState(
+                                        tracks = tracks,
+                                        isLoading = false,
+                                        isFailed = null
                                     )
-                                } else {
-                                    _tracksState.postValue(
-                                        TracksState(
-                                            tracks = tracks,
-                                            isLoading = false,
-                                            isFailed = null
-                                        )
-                                    )
-                                }
-
+                                )
                             }
+
                         }
                     }
-                }
-            )
+            }
         }
     }
-
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
