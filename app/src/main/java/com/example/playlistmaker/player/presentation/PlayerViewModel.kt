@@ -5,27 +5,29 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.media.domain.repository.FavoriteTracksRepository
 import com.example.playlistmaker.player.domain.interfaces.AudioPlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 private const val REFRESH_PROGRESS_DELAY = 300L
 
 class PlayerViewModel(
-
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    track: Track?
-): ViewModel() {
+    private val favoriteTracksRepository: FavoriteTracksRepository, // Новый интерактор
+    private val track: Track? // Передаем текущий трек
+) : ViewModel() {
 
     private var timerJob: Job? = null
 
-    private var statePlayerLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
+    private val statePlayerLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
+    private val isFavoriteLiveData = MutableLiveData<Boolean>(track?.isFavorite ?: false)
 
     // Получение состояния плеера
     fun getStatePlayerLiveData(): LiveData<PlayerState> = statePlayerLiveData
+    fun getIsFavoriteLiveData(): LiveData<Boolean> = isFavoriteLiveData
 
     init {
         setDataSource(track?.previewUrl)
@@ -37,27 +39,47 @@ class PlayerViewModel(
             statePlayerLiveData.postValue(PlayerState.Prepared())
         }
     }
+
+    // Обработка клика по кнопке "Нравится"
+    fun onFavoriteClicked() {
+        track?.let {
+            viewModelScope.launch {
+                if (it.isFavorite) {
+                    favoriteTracksRepository.removeTrackFromFavorites(it)
+                } else {
+                    favoriteTracksRepository.addTrackToFavorites(it)
+                }
+                it.isFavorite = !it.isFavorite
+                isFavoriteLiveData.postValue(it.isFavorite)
+            }
+        }
+    }
+
     // Изменение состояния плеера после клика Play
-    fun changeStatePlayerAfterClick () {
+    fun changeStatePlayerAfterClick() {
         when (statePlayerLiveData.value) {
             is PlayerState.Playing -> pause()
             is PlayerState.Paused, is PlayerState.Prepared -> start()
             else -> {}
         }
     }
+
     // Плеер
 
     private fun setDataSource(url: String?) {
         audioPlayerInteractor.setDataSource(url)
     }
+
     private fun preparePlayer() {
         audioPlayerInteractor.preparePlayer()
     }
+
     private fun start() {
         audioPlayerInteractor.start()
         statePlayerLiveData.postValue(PlayerState.Playing(currentPosition()))
         startTimer()
     }
+
     fun pause() {
         audioPlayerInteractor.pause()
         timerJob?.cancel()
@@ -74,21 +96,27 @@ class PlayerViewModel(
             }
         }
     }
+
     private fun currentPosition(): String {
         return audioPlayerInteractor.currentPosition()
     }
+
     private fun setOnPreparedListener(listener: MediaPlayer.OnPreparedListener) {
         audioPlayerInteractor.setOnPreparedListener(listener)
     }
+
     private fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
         audioPlayerInteractor.setOnCompletionListener(listener)
     }
-    private fun isPlaying (): Boolean {
+
+    private fun isPlaying(): Boolean {
         return audioPlayerInteractor.isPlaying()
     }
-    private fun release () {
+
+    private fun release() {
         audioPlayerInteractor.release()
     }
+
     override fun onCleared() {
         super.onCleared()
         release()

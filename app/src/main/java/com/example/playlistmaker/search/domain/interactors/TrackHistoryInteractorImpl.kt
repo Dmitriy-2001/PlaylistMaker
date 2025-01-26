@@ -1,15 +1,23 @@
 package com.example.playlistmaker.search.domain.interactors
 
+import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.search.domain.interfaces.HistoryTrackRepositorySH
 import com.example.playlistmaker.search.domain.interfaces.TrackHistoryInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
-class TrackHistoryInteractorImpl(private val historyTrackRepositorySH: HistoryTrackRepositorySH?):
-    TrackHistoryInteractor {
+class TrackHistoryInteractorImpl(
+    private val historyTrackRepositorySH: HistoryTrackRepositorySH?,
+    private val appDatabase: AppDatabase // Экземпляр базы данных
+) : TrackHistoryInteractor {
 
     private val historyList = ArrayList<Track>()
 
     override fun getHistoryList(): ArrayList<Track> {
+        runBlocking {
+            updateFavoritesInHistory()
+        }
         return historyList
     }
 
@@ -34,10 +42,12 @@ class TrackHistoryInteractorImpl(private val historyTrackRepositorySH: HistoryTr
                 shiftElementToTopOfHistoryList(index)
             }
         }
+        saveHistoryList()
     }
 
     override fun clearHistoryList() {
         historyList.clear()
+        saveHistoryList()
     }
 
     override fun transferToTop(track: Track): Int {
@@ -54,4 +64,11 @@ class TrackHistoryInteractorImpl(private val historyTrackRepositorySH: HistoryTr
         historyList.add(0, trackToMove)
     }
 
+    // Обновление состояния избранного в истории
+    private suspend fun updateFavoritesInHistory() {
+        val favoriteIds = appDatabase.favoriteTracksDao().getFavoriteTrackIds().first()
+        historyList.forEach { track ->
+            track.isFavorite = favoriteIds.contains(track.trackId)
+        }
+    }
 }

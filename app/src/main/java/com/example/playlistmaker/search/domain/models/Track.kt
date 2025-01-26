@@ -13,7 +13,8 @@ data class Track(
     val releaseDate: String?, // Год релиза трека
     val primaryGenreName: String?, // Жанр трека
     val country: String?, // Страна исполнителя
-    val previewUrl: String? // URL отрывка трека
+    val previewUrl: String?, // URL отрывка трека
+    var isFavorite: Boolean = false
 ) : Serializable {
     val artworkUrl512: String? // Ссылка на изображение обложки (Большой)
         get() = artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg") // Генерация ссылки на большую обложку
