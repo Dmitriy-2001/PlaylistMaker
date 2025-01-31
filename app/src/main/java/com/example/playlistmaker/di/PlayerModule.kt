@@ -1,6 +1,7 @@
 package com.example.playlistmaker.di
 
 import android.media.MediaPlayer
+import com.example.playlistmaker.media.domain.interactors.FavoriteTracksInteractor
 import com.example.playlistmaker.player.data.repository.AudioPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.interactors.AudioPlayerInteractorImpl
 import com.example.playlistmaker.player.domain.interfaces.AudioPlayerInteractor
@@ -11,21 +12,29 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val playerModule = module {
+    // Медиа-плеер
     factory { MediaPlayer() }
 
+    // Репозиторий аудиоплеера
     factory<AudioPlayerRepository> {
         AudioPlayerRepositoryImpl(mediaPlayer = get())
     }
 
+    // Интерактор аудиоплеера
     factory<AudioPlayerInteractor> {
         AudioPlayerInteractorImpl(audioPlayerRepository = get())
     }
 
+    // Получаем FavoriteTracksInteractor из medialibraryModule
+    single { get<FavoriteTracksInteractor>() }
+
+    // ViewModel для плеера
     viewModel { (track: Track) ->
         PlayerViewModel(
             track = track,
             audioPlayerInteractor = get(),
-            favoriteTracksRepository = get() // Добавляем зависимость
+            favoriteTracksInteractor = get()
         )
     }
 }
+

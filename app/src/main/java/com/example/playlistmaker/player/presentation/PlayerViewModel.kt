@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.media.domain.repository.FavoriteTracksRepository
+import com.example.playlistmaker.media.domain.interactors.FavoriteTracksInteractor
 import com.example.playlistmaker.player.domain.interfaces.AudioPlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
@@ -16,7 +16,7 @@ private const val REFRESH_PROGRESS_DELAY = 300L
 
 class PlayerViewModel(
     private val audioPlayerInteractor: AudioPlayerInteractor,
-    private val favoriteTracksRepository: FavoriteTracksRepository, // Новый интерактор
+    private val favoriteTracksInteractor: FavoriteTracksInteractor,
     private val track: Track? // Передаем текущий трек
 ) : ViewModel() {
 
@@ -45,9 +45,9 @@ class PlayerViewModel(
         track?.let {
             viewModelScope.launch {
                 if (it.isFavorite) {
-                    favoriteTracksRepository.removeTrackFromFavorites(it)
+                    favoriteTracksInteractor.removeTrackFromFavorites(it)
                 } else {
-                    favoriteTracksRepository.addTrackToFavorites(it)
+                    favoriteTracksInteractor.addTrackToFavorites(it)
                 }
                 it.isFavorite = !it.isFavorite
                 isFavoriteLiveData.postValue(it.isFavorite)

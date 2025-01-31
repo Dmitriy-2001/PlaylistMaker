@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:theme="@style/Settings"
+    android:background="?attr/whiteBlack"
     tools:context=".settings.ui.SettingFragment">
 
     <!-- Ваша Toolbar -->

@@ -5,6 +5,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.media.data.repository.FavoriteTracksRepositoryImpl
+import com.example.playlistmaker.media.domain.interactors.FavoriteTracksInteractor
 import com.example.playlistmaker.media.domain.repository.FavoriteTracksRepository
 import com.example.playlistmaker.media.presentation.MedialibraryFavouritesViewModel
 import com.example.playlistmaker.media.presentation.MedialibraryPlaylistsViewModel
@@ -15,36 +16,39 @@ import org.koin.dsl.module
 
 val medialibraryModule = module {
 
-    viewModel { MedialibraryFavouritesViewModel(get()) }
+    // DAO
+    single { get<AppDatabase>().favoriteTracksDao() }
+
+    // Репозиторий избранных треков
+    single<FavoriteTracksRepository> { FavoriteTracksRepositoryImpl(dao = get()) }
+
+    // Интерактор избранных треков
+    single { FavoriteTracksInteractor(repository = get()) }
+
+    // ViewModel для избранного
+    viewModel { MedialibraryFavouritesViewModel(favoriteTracksInteractor = get()) }
+
+    // ViewModel для плейлистов
+    viewModel { MedialibraryPlaylistsViewModel() }
+
+    // Адаптер для треков
     factory { (onTrackClick: (Track) -> Unit) -> TrackAdapter(onTrackClick) }
 
-    viewModel {
-        MedialibraryPlaylistsViewModel()
-    }
-    // Регистрация репозитория избранных треков
-    single<FavoriteTracksRepository> {
-        FavoriteTracksRepositoryImpl(dao = get())
-    }
-
-    // Определение миграции базы данных
+    // Миграция базы данных
     val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(database: SupportSQLiteDatabase) {
-            // Добавляем новое поле timestamp с типом INTEGER и значением по умолчанию 0
             database.execSQL("ALTER TABLE favorite_tracks ADD COLUMN timestamp INTEGER DEFAULT 0 NOT NULL")
         }
     }
 
-    // Определение базы данных с миграцией
+    // База данных
     single {
         Room.databaseBuilder(
             get(),
             AppDatabase::class.java,
-            "app_database" // Имя БД
+            "app_database"
         )
-            .addMigrations(MIGRATION_1_2) // Добавляем миграцию
+            .addMigrations(MIGRATION_1_2)
             .build()
     }
-
-    // Определение DAO
-    single { get<AppDatabase>().favoriteTracksDao() }
 }
