@@ -58,11 +58,15 @@ val searchModule = module {
     }
 
     factory<TrackHistoryInteractor> {
-        TrackHistoryInteractorImpl(historyTrackRepositorySH = get())
+        TrackHistoryInteractorImpl(
+            historyTrackRepositorySH = get(),
+            appDatabase = get())
     }
 
     factory<TracksSearchInteractor> {
-        TracksSearchSearchInteractorImpl(tracksSearchRepository = get())
+        TracksSearchSearchInteractorImpl(
+            tracksSearchRepository = get(),
+            appDatabase = get())
     }
 
     viewModel {

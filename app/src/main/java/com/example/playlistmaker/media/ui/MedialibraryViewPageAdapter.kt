@@ -5,14 +5,18 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class MedialibraryViewPageAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle)
-    : FragmentStateAdapter(fragmentManager, lifecycle) {
+class MedialibraryViewPageAdapter(
+    fragmentManager: FragmentManager,
+    lifecycle: Lifecycle
+) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
-    override fun getItemCount(): Int {
-        return 2
-    }
+    override fun getItemCount(): Int = 2
 
     override fun createFragment(position: Int): Fragment {
-        return if (position == 0) MedialibraryFavouritesFragment.newInstance() else MedialibraryPlaylistsFragment.newInstance()
+        return when (position) {
+            0 -> MedialibraryFavouritesFragment.newInstance()
+            1 -> MedialibraryPlaylistsFragment.newInstance()
+            else -> throw IllegalArgumentException("Invalid position")
+        }
     }
 }

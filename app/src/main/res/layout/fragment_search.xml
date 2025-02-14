@@ -61,7 +61,8 @@
             android:paddingEnd="@dimen/thirty_two"
             android:textFontWeight="400"
             tools:ignore="TouchTargetSizeCheck"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textCursorDrawable="@null"/>
 
         <ImageView
             android:id="@+id/clearIcon"
