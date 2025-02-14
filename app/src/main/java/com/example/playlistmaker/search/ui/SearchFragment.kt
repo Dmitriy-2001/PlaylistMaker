@@ -3,7 +3,6 @@ package com.example.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,12 +19,12 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.KEY_FOR_PLAYER
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.root.listeners.BottomNavigationListener
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchingViewModel
@@ -253,18 +252,23 @@ class SearchFragment: Fragment() {
     private fun clickToTrackList(track: Track) {
         viewModel.addTrackToHistoryList(track)
 
-        val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
-        intent.putExtra(KEY_FOR_PLAYER, track)
-        startActivity(intent)
+        val bundle = Bundle().apply {
+            putSerializable(KEY_FOR_PLAYER, track)
+        }
+
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
     }
 
     private fun clickToHistoryTrackList(track: Track) {
         viewModel.transferTrackToTop(track)
 
-        val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
-        intent.putExtra(KEY_FOR_PLAYER, track)
-        startActivity(intent)
+        val bundle = Bundle().apply {
+            putSerializable(KEY_FOR_PLAYER, track)
+        }
+
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
     }
+
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showPlaceholder(flag: Boolean?, message: String = "") {

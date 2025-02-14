@@ -6,8 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.interactors.FavoriteTracksInteractor
+import com.example.playlistmaker.media.domain.interactors.PlaylistsInteractor
+import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.player.domain.interfaces.AudioPlayerInteractor
+import com.example.playlistmaker.player.ui.TrackInPlaylistState
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -17,17 +21,25 @@ private const val REFRESH_PROGRESS_DELAY = 300L
 class PlayerViewModel(
     private val audioPlayerInteractor: AudioPlayerInteractor,
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
-    private val track: Track? // Передаем текущий трек
+    private val playlistsInteractor: PlaylistsInteractor,
+    private val track: Track?
+
 ) : ViewModel() {
 
     private var timerJob: Job? = null
 
     private val statePlayerLiveData = MutableLiveData<PlayerState>(PlayerState.Default())
     private val isFavoriteLiveData = MutableLiveData<Boolean>(track?.isFavorite ?: false)
+    private val playlistsLiveData = MutableLiveData<List<Playlist>>()
+    private val trackInPlaylistLiveData = MutableLiveData<TrackInPlaylistState>()
 
     // Получение состояния плеера
     fun getStatePlayerLiveData(): LiveData<PlayerState> = statePlayerLiveData
     fun getIsFavoriteLiveData(): LiveData<Boolean> = isFavoriteLiveData
+    fun observePlaylists(): LiveData<List<Playlist>> = playlistsLiveData
+    fun observeTrackInPlaylistState(): LiveData<TrackInPlaylistState> = trackInPlaylistLiveData
+    fun getTrack(): Track? = track
+
 
     init {
         setDataSource(track?.previewUrl)
@@ -65,6 +77,24 @@ class PlayerViewModel(
     }
 
     // Плеер
+    fun getSavedPlaylists() {
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistsInteractor.getSavedPlaylists().collect { playlists ->
+                playlistsLiveData.postValue(playlists)
+            }
+        }
+    }
+
+    fun addTracksIdInPlaylist(playlist: Playlist, tracksId: List<Int>, track: Track) {
+        if (track.trackId in tracksId) {
+            trackInPlaylistLiveData.postValue(TrackInPlaylistState.TrackIsAlreadyInPlaylist(playlist.playlistName))
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                playlistsInteractor.addTracksIdInPlaylist(playlist, tracksId, track)
+            }
+            trackInPlaylistLiveData.postValue(TrackInPlaylistState.TrackAddToPlaylist(playlist.playlistName))
+        }
+    }
 
     private fun setDataSource(url: String?) {
         audioPlayerInteractor.setDataSource(url)
