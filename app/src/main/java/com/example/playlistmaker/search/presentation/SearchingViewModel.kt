@@ -9,8 +9,10 @@ import com.example.playlistmaker.search.domain.interfaces.TracksSearchInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.models.TracksState
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class SearchingViewModel(
     private val tracksSearchInteractor: TracksSearchInteractor,
@@ -26,8 +28,8 @@ class SearchingViewModel(
         assignListToHistoryList()
     }
 
-    private val _tracksState = MutableLiveData<TracksState>()
-    val tracksState: LiveData<TracksState> = _tracksState
+    private val _tracksState = MutableStateFlow(TracksState(emptyList(), false, null))
+    val tracksState: StateFlow<TracksState> = _tracksState
 
     private var lastSearchText: String? = null
 
@@ -83,25 +85,16 @@ class SearchingViewModel(
 
     }
 
-    fun refreshTrackState() {
-        _tracksState.postValue(
-            TracksState(
-                tracks = emptyList(),
-                isLoading = false,
-                isFailed = null
-            )
-        )
-    }
     fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
 
-            _tracksState.postValue(
+            _tracksState.value =
                 TracksState(
                     tracks = null,
                     isLoading = true,
                     isFailed = null
                 )
-            )
+
 
             viewModelScope.launch {
                 tracksSearchInteractor
@@ -112,32 +105,29 @@ class SearchingViewModel(
                             tracks.addAll(pair.first!!)
                         }
                         if (pair.second != null) {
-                            _tracksState.postValue(
+                            _tracksState.value =
                                 TracksState(
                                     tracks = emptyList(),
                                     isLoading = false,
                                     isFailed = pair.second
                                 )
-                            )
                         } else {
                             if (tracks.isEmpty()) {
 
-                                _tracksState.postValue(
+                                _tracksState.value =
                                     TracksState(
                                         tracks = emptyList(),
                                         isLoading = false,
                                         isFailed = null
                                     )
-                                )
 
                             }  else {
-                                _tracksState.postValue(
+                                _tracksState.value =
                                     TracksState(
                                         tracks = tracks,
                                         isLoading = false,
                                         isFailed = null
                                     )
-                                )
                             }
 
                         }

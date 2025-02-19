@@ -116,8 +116,10 @@ class SearchFragment: Fragment() {
             textFromSearchWidget = savedInstanceState.getString(EDIT_TEXT_VALUE, "")
         }
 
-        viewModel.tracksState.observe(viewLifecycleOwner) { tracksState ->
-            render(tracksState)
+        lifecycleScope.launch {
+            viewModel.tracksState.collect { tracksState ->
+                render(tracksState)
+            }
         }
 
         val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -206,19 +208,12 @@ class SearchFragment: Fragment() {
                 }
             }
         )
-
-        // Refresh track state if input is empty
-        if (inputEditText.text.toString().isEmpty()) {
-            viewModel.refreshTrackState()
-        }
     }
-
 
     override fun onStop() {
         super.onStop()
         viewModel.saveHistoryList()
     }
-
     override fun onDestroyView() {
         viewModel.onDestroy()
         super.onDestroyView()
@@ -226,20 +221,17 @@ class SearchFragment: Fragment() {
     }
     override fun onPause() {
         super.onPause()
-        if (inputEditText.text.toString().isEmpty()) {
-            viewModel.refreshTrackState()
-        }
-        textFromSearchWidget = inputEditText.text.toString() // Сохранение текста поиска
+        textFromSearchWidget = inputEditText.text.toString()
     }
-
-
+    override fun onResume() {
+        super.onResume()
+        isClickAllowed = true
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_TEXT_VALUE, textFromSearchWidget)
     }
-
-
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -290,16 +282,14 @@ class SearchFragment: Fragment() {
     }
 
     private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
-        }
+        if (!isClickAllowed) return false
 
-        return current
+        isClickAllowed = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(CLICK_DEBOUNCE_DELAY)
+            isClickAllowed = true
+        }
+        return true
     }
 
     @SuppressLint("NotifyDataSetChanged")

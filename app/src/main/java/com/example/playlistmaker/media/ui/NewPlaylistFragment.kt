@@ -1,5 +1,6 @@
 package com.example.playlistmaker.media.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
+import com.example.playlistmaker.root.listeners.BottomNavigationListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -24,24 +26,34 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class NewPlaylistFragment : Fragment() {
 
     private lateinit var toastPlaylistName: String
-
-    private val newPlaylistVewModel by viewModel<NewPlaylistViewModel>()
-
+    private val newPlaylistViewModel by viewModel<NewPlaylistViewModel>()
     private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
-
     lateinit var confirmDialog: MaterialAlertDialogBuilder
-
     private var isImageAdd: Boolean = false
 
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
 
+    private var bottomNavigationListener: BottomNavigationListener? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is BottomNavigationListener) {
+            bottomNavigationListener = context
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        bottomNavigationListener = null
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
 
-        requireActivity().getWindow()
+        requireActivity().window
             .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         return binding.root
@@ -49,6 +61,8 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        bottomNavigationListener?.toggleBottomNavigationViewVisibility(false)
 
         val playlistNameEditText =
             binding.playlistName.findViewById<TextInputEditText>(R.id.playlistName)
@@ -58,39 +72,38 @@ class NewPlaylistFragment : Fragment() {
 
         playlistNameEditText.doOnTextChanged { text, _, _, _ ->
             binding.createPlaylist.isEnabled = !text.isNullOrBlank()
-            newPlaylistVewModel.setPlaylistName(text.toString())
+            newPlaylistViewModel.setPlaylistName(text.toString())
             toastPlaylistName = text.toString()
         }
 
         playlistDescriptionEditText.doOnTextChanged { text, _, _, _ ->
-            newPlaylistVewModel.setPlaylistDescroption(text.toString())
+            newPlaylistViewModel.setPlaylistDescroption(text.toString())
         }
 
         pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 binding.playlistImage.setImageURI(uri)
-                newPlaylistVewModel.saveImageToLocalStorage(uri)
-                newPlaylistVewModel.setUri(uri)
+                newPlaylistViewModel.saveImageToLocalStorage(uri)
+                newPlaylistViewModel.setUri(uri)
                 isImageAdd = true
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
         }
 
-
         confirmDialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.finish_creating_playlist)
             .setMessage(R.string.loss_of_unsaved_data)
-            .setNeutralButton(R.string.cancel) { dialog, which -> }
-            .setPositiveButton(R.string.finish) { dialog, which ->
+            .setNeutralButton(R.string.cancel) { _, _ -> }
+            .setPositiveButton(R.string.finish) { _, _ ->
                 findNavController().navigateUp()
             }
 
-        binding.playlistImage.setOnClickListener() {
+        binding.playlistImage.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        binding.back.setOnClickListener() {
+        binding.back.setOnClickListener {
             onBackPressed(playlistNameEditText, playlistDescriptionEditText)
         }
 
@@ -102,8 +115,8 @@ class NewPlaylistFragment : Fragment() {
                 }
             })
 
-        binding.createPlaylist.setOnClickListener() {
-            newPlaylistVewModel.createPlaylist()
+        binding.createPlaylist.setOnClickListener {
+            newPlaylistViewModel.createPlaylist()
             findNavController().navigateUp()
             Toast.makeText(
                 requireContext(),
@@ -116,6 +129,7 @@ class NewPlaylistFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        bottomNavigationListener?.toggleBottomNavigationViewVisibility(true)
     }
 
     private fun onBackPressed(
