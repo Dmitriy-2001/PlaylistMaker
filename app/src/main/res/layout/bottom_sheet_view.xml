@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/twelve"
+    android:layout_marginEnd="@dimen/forty_four"
+    android:orientation="horizontal">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/playlistCover"
+        android:layout_width="@dimen/forty_five"
+        android:layout_height="@dimen/forty_five"
+        android:layout_gravity="center_vertical"
+        android:layout_marginVertical="@dimen/small_padding"
+        android:scaleType="centerCrop"
+        app:cardCornerRadius="@dimen/two"
+        tools:src="@drawable/placeholder" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/small_padding"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/playlistName"
+            style="@style/TextInField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fourteen"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?attr/blackWhite"
+            tools:text="Playlist Name" />
+
+        <TextView
+            android:id="@+id/tracksCount"
+            style="@style/TextTrackCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="0 tracks" />
+
+    </LinearLayout>
+</LinearLayout>

@@ -3,7 +3,6 @@ package com.example.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,12 +19,12 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.KEY_FOR_PLAYER
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.root.listeners.BottomNavigationListener
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchingViewModel
@@ -117,8 +116,10 @@ class SearchFragment: Fragment() {
             textFromSearchWidget = savedInstanceState.getString(EDIT_TEXT_VALUE, "")
         }
 
-        viewModel.tracksState.observe(viewLifecycleOwner) { tracksState ->
-            render(tracksState)
+        lifecycleScope.launch {
+            viewModel.tracksState.collect { tracksState ->
+                render(tracksState)
+            }
         }
 
         val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -207,19 +208,12 @@ class SearchFragment: Fragment() {
                 }
             }
         )
-
-        // Refresh track state if input is empty
-        if (inputEditText.text.toString().isEmpty()) {
-            viewModel.refreshTrackState()
-        }
     }
-
 
     override fun onStop() {
         super.onStop()
         viewModel.saveHistoryList()
     }
-
     override fun onDestroyView() {
         viewModel.onDestroy()
         super.onDestroyView()
@@ -227,20 +221,17 @@ class SearchFragment: Fragment() {
     }
     override fun onPause() {
         super.onPause()
-        if (inputEditText.text.toString().isEmpty()) {
-            viewModel.refreshTrackState()
-        }
-        textFromSearchWidget = inputEditText.text.toString() // Сохранение текста поиска
+        textFromSearchWidget = inputEditText.text.toString()
     }
-
-
+    override fun onResume() {
+        super.onResume()
+        isClickAllowed = true
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(EDIT_TEXT_VALUE, textFromSearchWidget)
     }
-
-
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
@@ -253,18 +244,23 @@ class SearchFragment: Fragment() {
     private fun clickToTrackList(track: Track) {
         viewModel.addTrackToHistoryList(track)
 
-        val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
-        intent.putExtra(KEY_FOR_PLAYER, track)
-        startActivity(intent)
+        val bundle = Bundle().apply {
+            putSerializable(KEY_FOR_PLAYER, track)
+        }
+
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
     }
 
     private fun clickToHistoryTrackList(track: Track) {
         viewModel.transferTrackToTop(track)
 
-        val intent = Intent(requireContext(), AudioPlayerActivity::class.java)
-        intent.putExtra(KEY_FOR_PLAYER, track)
-        startActivity(intent)
+        val bundle = Bundle().apply {
+            putSerializable(KEY_FOR_PLAYER, track)
+        }
+
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
     }
+
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showPlaceholder(flag: Boolean?, message: String = "") {
@@ -286,16 +282,14 @@ class SearchFragment: Fragment() {
     }
 
     private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
-        }
+        if (!isClickAllowed) return false
 
-        return current
+        isClickAllowed = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(CLICK_DEBOUNCE_DELAY)
+            isClickAllowed = true
+        }
+        return true
     }
 
     @SuppressLint("NotifyDataSetChanged")

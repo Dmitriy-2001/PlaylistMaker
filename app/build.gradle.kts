@@ -46,18 +46,18 @@ android {
 
 dependencies {
 
-    implementation ("androidx.core:core-ktx:1.13.1")
+    implementation ("androidx.core:core-ktx:1.12.0")
     implementation ("androidx.appcompat:appcompat:1.7.0")
     implementation ("com.google.android.material:material:1.12.0")
-    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation ("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation ("androidx.test.ext:junit-ktx:1.2.1")
-    implementation ("androidx.test:monitor:1.7.1")
+    implementation ("androidx.test:monitor:1.7.2")
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.2.1")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.6.1")
     implementation ("com.github.bumptech.glide:glide:4.14.2")
     // Network
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
+    kapt ("com.github.bumptech.glide:compiler:4.14.2")
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -67,13 +67,13 @@ dependencies {
     //Koin
     implementation ("io.insert-koin:koin-android:3.3.0")
     //Fragment
-    implementation ("androidx.fragment:fragment-ktx:1.8.1")
+    implementation ("androidx.fragment:fragment-ktx:1.8.5")
     // Viewpager
     implementation ("androidx.viewpager2:viewpager2:1.1.0")
     // Jetpack Navigation Component
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation ("androidx.fragment:fragment-ktx:1.8.1")
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.8.6")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.8.6")
+    implementation ("androidx.fragment:fragment-ktx:1.8.5")
     //Room
     implementation ("androidx.room:room-runtime:2.6.1")
     kapt ("androidx.room:room-compiler:2.6.1")
