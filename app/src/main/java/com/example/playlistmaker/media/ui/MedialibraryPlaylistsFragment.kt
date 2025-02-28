@@ -10,8 +10,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsLibraryBinding
+import com.example.playlistmaker.media.domain.model.IntentKeys.PLAYLIST_ID_KEY
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.presentation.MedialibraryPlaylistsViewModel
+import com.google.gson.Gson
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MedialibraryPlaylistsFragment : Fragment() {
@@ -22,6 +25,7 @@ class MedialibraryPlaylistsFragment : Fragment() {
 
     private var _binding: FragmentPlaylistsLibraryBinding? = null
     private val binding get() = _binding!!
+    private val gson: Gson by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +43,7 @@ class MedialibraryPlaylistsFragment : Fragment() {
             render(it)
         }
 
-        adapter = PlaylistAdapter()
+        adapter = PlaylistAdapter { playlist -> openPlaylist(playlist) }
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
@@ -83,6 +87,13 @@ class MedialibraryPlaylistsFragment : Fragment() {
         adapter?.playlists?.addAll(playlists)
         adapter?.notifyDataSetChanged()
     }
+    private fun openPlaylist(playlist: Playlist) {
+        val bundle = Bundle().apply {
+            putString(PLAYLIST_ID_KEY, gson.toJson(playlist))
+        }
+        findNavController().navigate(R.id.action_libraryFragment_to_playlistViewFragment, bundle)
+    }
+
     companion object {
         fun newInstance(): MedialibraryPlaylistsFragment {
             return MedialibraryPlaylistsFragment()

@@ -56,6 +56,7 @@ dependencies {
     androidTestImplementation ("androidx.test.ext:junit:1.2.1")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.6.1")
     implementation ("com.github.bumptech.glide:glide:4.14.2")
+    implementation ("androidx.activity:activity-ktx:1.7.2")
     // Network
     kapt ("com.github.bumptech.glide:compiler:4.14.2")
     implementation ("com.google.code.gson:gson:2.10.1")

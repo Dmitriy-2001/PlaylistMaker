@@ -7,7 +7,7 @@ data class TrackDto(
     val trackId: Int, // ID трека
     val trackName: String?, // Название композиции
     val artistName: String?, // Имя исполнителя
-    @SerializedName("trackTimeMillis") val trackTime: String?, // Продолжительность трека в миллисекундах
+    @SerializedName("trackTimeMillis") val trackTime: Long, // Продолжительность трека в миллисекундах
     @SerializedName("artworkUrl100") val artworkUrl100: String?, // Ссылка на изображение обложки (Малый)
     val collectionName: String?, // Название альбома
     val releaseDate: String?, // Год релиза трека

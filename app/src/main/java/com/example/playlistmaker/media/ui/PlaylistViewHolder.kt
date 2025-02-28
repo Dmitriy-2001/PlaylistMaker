@@ -5,7 +5,6 @@ import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.media.domain.model.Playlist
-import com.example.playlistmaker.search.domain.models.TrackWord
 
 class PlaylistViewHolder(private val binding: PlaylistViewBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -13,7 +12,11 @@ class PlaylistViewHolder(private val binding: PlaylistViewBinding) :
     fun bind(playlist: Playlist) {
         with(binding) {
             playlistName.text = playlist.playlistName
-            tracksCount.text = playlist.tracksCount.toString()+" "+ TrackWord.getTrackWord(playlist.tracksCount, itemView)
+            tracksCount.text = binding.root.resources.getQuantityString(
+                R.plurals.tracks,
+                playlist.tracksIdInPlaylist.size,
+                playlist.tracksIdInPlaylist.size
+            )
         }
         Glide.with(itemView).load(playlist.uri).centerCrop()
             .placeholder(R.drawable.placeholder).into(binding.playlistCover)

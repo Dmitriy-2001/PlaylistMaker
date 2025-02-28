@@ -11,13 +11,18 @@ import com.example.playlistmaker.media.domain.interactors.LocalStorageInteractor
 import com.example.playlistmaker.media.domain.interactors.PlaylistsInteractor
 import com.example.playlistmaker.media.domain.interactors.PlaylistsInteractorImpl
 import com.example.playlistmaker.media.domain.repository.FavoriteTracksRepository
+import com.example.playlistmaker.media.domain.repository.GetPlaylistUseCase
 import com.example.playlistmaker.media.domain.repository.LocalStorageRepository
 import com.example.playlistmaker.media.domain.repository.PlaylistsRepository
+import com.example.playlistmaker.media.presentation.EditPlaylistViewModel
 import com.example.playlistmaker.media.presentation.MedialibraryFavouritesViewModel
 import com.example.playlistmaker.media.presentation.MedialibraryPlaylistsViewModel
 import com.example.playlistmaker.media.presentation.NewPlaylistViewModel
+import com.example.playlistmaker.media.presentation.ViewPlaylistViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.TrackAdapter
+import com.google.gson.Gson
+import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -30,17 +35,22 @@ val medialibraryModule = module {
     // Репозитории
     single<FavoriteTracksRepository> { FavoriteTracksRepositoryImpl(dao = get()) }
     single<LocalStorageRepository> { LocalStorageRepositoryImpl(get()) }
-    single<PlaylistsRepository> { PlaylistsRepositoryImpl(get()) }
+    single<PlaylistsRepository> { PlaylistsRepositoryImpl(get(), get()) }
 
     // Интеракторы
     single { FavoriteTracksInteractor(repository = get()) }
     single<LocalStorageInteractor> { LocalStorageInteractorImpl(get()) }
     single<PlaylistsInteractor> { PlaylistsInteractorImpl(get()) }
 
+    // UseCase
+    factory { GetPlaylistUseCase(get()) }
+
     // ViewModel
     viewModel { MedialibraryFavouritesViewModel(favoriteTracksInteractor = get()) }
     viewModel { MedialibraryPlaylistsViewModel(get()) }
     viewModel { NewPlaylistViewModel(get(), get()) }
+    viewModel { EditPlaylistViewModel(get(), get(), get()) }
+    viewModel { ViewPlaylistViewModel(androidApplication(), get(), get()) }
 
     // Адаптер для треков
     factory { (onTrackClick: (Track) -> Unit) -> TrackAdapter(onTrackClick) }
@@ -51,6 +61,10 @@ val medialibraryModule = module {
             get(),
             AppDatabase::class.java,
             "app_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
+    // Gson
+    single { Gson() }
 }

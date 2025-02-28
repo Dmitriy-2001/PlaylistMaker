@@ -70,4 +70,29 @@
         <item name="cornerSize">@dimen/small_padding</item>
     </style>
 
+    <style name="DarkPoint" >
+        <item name="android:src">@drawable/icon_point_black</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:drawableTint">@color/gray</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:layout_gravity">center</item>
+
+    </style>
+
+    <style name="ButtonBackTrans">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/twelve</item>
+        <item name="android:importantForAccessibility">no</item>
+
+        <item name="android:src">@drawable/arrow_back</item>
+    </style>
+
+    <style name="PlaylistDetailMoreIcon">
+        <item name="android:background">@color/white</item>
+        <item name="android:src">@drawable/icon_more</item>
+    </style>
+
 </resources>

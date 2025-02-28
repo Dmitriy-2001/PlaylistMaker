@@ -18,4 +18,10 @@ interface PlaylistDao {
 
     @Update
     suspend fun updatePlaylist(playlist: PlaylistEntity)
+
+    @Query("SELECT * FROM playlist_table WHERE playlistId = :playlistId")
+    fun getSavedPlaylist(playlistId: Int): Flow<PlaylistEntity>
+
+    @Query("DELETE FROM playlist_table WHERE playlistId = :playlistId")
+    suspend fun removePlaylist(playlistId: Int)
 }
