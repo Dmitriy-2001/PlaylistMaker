@@ -20,7 +20,7 @@ class MedialibraryPlaylistsViewModel(private val playlistsInteractor: PlaylistsI
         getSavedPlaylists()
     }
 
-    private fun getSavedPlaylists() {
+     fun getSavedPlaylists() {
         viewModelScope.launch(Dispatchers.IO) {
             playlistsInteractor.getSavedPlaylists().collect { playlists ->
                 processResult(playlists)

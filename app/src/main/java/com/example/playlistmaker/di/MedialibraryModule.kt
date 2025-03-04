@@ -49,7 +49,7 @@ val medialibraryModule = module {
     viewModel { MedialibraryFavouritesViewModel(favoriteTracksInteractor = get()) }
     viewModel { MedialibraryPlaylistsViewModel(get()) }
     viewModel { NewPlaylistViewModel(get(), get()) }
-    viewModel { EditPlaylistViewModel(get(), get(), get()) }
+    viewModel { EditPlaylistViewModel(get(), get(), get(), get(), get()) }
     viewModel { ViewPlaylistViewModel(androidApplication(), get(), get()) }
 
     // Адаптер для треков

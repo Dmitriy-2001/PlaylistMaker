@@ -9,6 +9,7 @@ import com.example.playlistmaker.media.domain.interactors.LocalStorageInteractor
 import com.example.playlistmaker.media.domain.interactors.PlaylistsInteractor
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.domain.repository.GetPlaylistUseCase
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -16,6 +17,8 @@ class EditPlaylistViewModel(
     private val localStorageInteractor: LocalStorageInteractor,
     private val getPlaylistUseCase: GetPlaylistUseCase,
     private val playlistsInteractor: PlaylistsInteractor,
+    private val viewPlaylistViewModel: ViewPlaylistViewModel,
+    private val gson: Gson
 ) : NewPlaylistViewModel(localStorageInteractor, playlistsInteractor) {
 
     private val _playlistLiveData = MutableLiveData<Playlist>()
@@ -43,7 +46,18 @@ class EditPlaylistViewModel(
     fun editPlaylist() {
         Log.d("EditPlaylistViewModel", playlistName)
         viewModelScope.launch(Dispatchers.IO) {
-            playlistsInteractor.createPlaylist(
+            playlistsInteractor.updatePlaylist(
+                Playlist(
+                    playlistId = playlistId,
+                    playlistName = playlistName,
+                    playlistDescription = playlistDescription,
+                    uri = uri,
+                    tracksIdInPlaylist = tracks,
+                    tracksCount = tracks.size
+                )
+            )
+            // Обновляем данные в ViewPlaylistViewModel
+            viewPlaylistViewModel.updatePlaylist(
                 Playlist(
                     playlistId = playlistId,
                     playlistName = playlistName,

@@ -14,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.example.playlistmaker.KEY_FOR_HISTORY_LIST
+import com.example.playlistmaker.KEY_FOR_PLAYER
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistCollectionBinding
 import com.example.playlistmaker.media.domain.model.IntentKeys.PLAYLIST_ID_KEY
@@ -62,7 +62,8 @@ class PlaylistViewFragment : Fragment() {
             PlaylistTracksAdapter(onTrackClick = { track: Track -> openPlayerWithTrack(track) },
                 onLongTrackClick = { track: Track ->
                     confirmDialogTrack =
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.remove_track_question))
+                        MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
+                            .setTitle(getString(R.string.remove_track_question))
                             .setMessage(R.string.remove_track_question)
                             .setPositiveButton(getString(R.string.yes_option)) { _, _ ->
                                 viewModel.removeTrack(track.trackId)
@@ -89,21 +90,20 @@ class PlaylistViewFragment : Fragment() {
                 binding.playlistDescription.text = playlist.playlistDescription
             }
             Glide.with(requireContext()).load(playlist.uri).placeholder(R.drawable.placeholder)
-                .diskCacheStrategy(
-                    DiskCacheStrategy.NONE
-                ).skipMemoryCache(true).into(binding.playlistImage)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true).into(binding.playlistImage)
             Glide.with(requireContext()).load(playlist.uri).placeholder(R.drawable.placeholder)
-                .diskCacheStrategy(
-                    DiskCacheStrategy.NONE
-                ).skipMemoryCache(true).into(binding.playlistImageBottom)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true).into(binding.playlistImageBottom)
             binding.playlistNameBottom.text = playlist.playlistName
 
-            confirmDialog =
-                MaterialAlertDialogBuilder(requireContext()).setMessage("Хотите удалить плейлист \"${playlist.playlistName}\"?")
-                    .setNeutralButton("Нет") { _, _ -> }.setPositiveButton("Да") { _, _ ->
-                        viewModel.deletePlaylist()
-                        findNavController().navigateUp()
-                    }
+            confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.DialogTheme)
+                .setMessage("Хотите удалить плейлист \"${playlist.playlistName}\"?")
+                .setNeutralButton("Нет") { _, _ -> }
+                .setPositiveButton("Да") { _, _ ->
+                    viewModel.deletePlaylist()
+                    findNavController().navigateUp()
+                }
             binding.editPlaylistButton.setOnClickListener {
                 openPlaylist(playlist)
             }
@@ -113,12 +113,8 @@ class PlaylistViewFragment : Fragment() {
         }
         viewModel.trackListLiveData.observe(viewLifecycleOwner) {
             adapter.replaceTracks(it)
-            binding.trackQuantityBottom.text = resources.getQuantityString(
-                R.plurals.tracks, it.size, it.size
-            )
-            binding.tracksQty.text = resources.getQuantityString(
-                R.plurals.tracks, it.size, it.size
-            )
+            binding.trackQuantityBottom.text = resources.getQuantityString(R.plurals.tracks, it.size, it.size)
+            binding.tracksQty.text = resources.getQuantityString(R.plurals.tracks, it.size, it.size)
         }
 
 
@@ -210,7 +206,7 @@ class PlaylistViewFragment : Fragment() {
 
     private fun openPlayerWithTrack(track: Track) {
         val bundle = Bundle().apply {
-            putString(KEY_FOR_HISTORY_LIST, gson.toJson(track))
+            putString(KEY_FOR_PLAYER, gson.toJson(track))
         }
         findNavController().navigate(R.id.action_playlistViewFragment_to_playerFragment, bundle)
     }

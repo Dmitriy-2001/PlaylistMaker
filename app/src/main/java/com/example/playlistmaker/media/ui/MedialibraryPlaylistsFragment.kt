@@ -94,6 +94,11 @@ class MedialibraryPlaylistsFragment : Fragment() {
         findNavController().navigate(R.id.action_libraryFragment_to_playlistViewFragment, bundle)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getSavedPlaylists()
+    }
+
     companion object {
         fun newInstance(): MedialibraryPlaylistsFragment {
             return MedialibraryPlaylistsFragment()

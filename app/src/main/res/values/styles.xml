@@ -86,13 +86,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">@dimen/twelve</item>
         <item name="android:importantForAccessibility">no</item>
-
         <item name="android:src">@drawable/arrow_back</item>
-    </style>
-
-    <style name="PlaylistDetailMoreIcon">
-        <item name="android:background">@color/white</item>
-        <item name="android:src">@drawable/icon_more</item>
     </style>
 
 </resources>

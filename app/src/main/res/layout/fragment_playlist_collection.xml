@@ -121,6 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="@dimen/medium_padding"
+            app:tint="@color/blackYP"
             android:gravity="fill"
             android:importantForAccessibility="no"
             app:layout_constraintStart_toEndOf="@id/left_border"
@@ -129,11 +130,11 @@
 
         <ImageView
             android:id="@+id/button_more"
-            style="@style/PlaylistDetailMoreIcon"
+            android:src="@drawable/icon_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:layout_marginStart="@dimen/small_padding"
+            android:layout_marginStart="@dimen/twelve"
             android:gravity="fill"
             android:importantForAccessibility="no"
             app:layout_constraintBottom_toBottomOf="@id/button_share"

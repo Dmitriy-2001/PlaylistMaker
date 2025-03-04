@@ -35,7 +35,7 @@
             android:layout_gravity="start"
             android:fontFamily="@font/ys_display_regular"
             android:textSize="@dimen/text"
-            android:textColor="?attr/colorOnPrimary"
+            android:textColor="?attr/blackWhite"
             android:maxLines="1"
             android:ellipsize="end"
             tools:text="No Reply" />

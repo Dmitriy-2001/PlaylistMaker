@@ -49,6 +49,17 @@ class ViewPlaylistViewModel(
         }
     }
 
+    fun updatePlaylist(playlist: Playlist) {
+        _playlistLiveData.postValue(playlist)
+        viewModelScope.launch {
+            playlistInteractor.getTracksInPlaylist(playlist.tracksIdInPlaylist)
+                .collect { tracks ->
+                    _trackTimeLiveData.postValue(TimeUnit.MILLISECONDS.toMinutes(tracks.map { it.trackTime }.sum()))
+                    _trackListLiveData.postValue(tracks)
+                }
+        }
+    }
+
     fun getMessage(): String? {
         val tracks = trackListLiveData.value
         if (tracks.isNullOrEmpty()) return null

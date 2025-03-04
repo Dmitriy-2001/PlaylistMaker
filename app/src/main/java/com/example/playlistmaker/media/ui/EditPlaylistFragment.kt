@@ -78,7 +78,6 @@ class EditPlaylistFragment : Fragment() {
         binding.createPlaylist.setOnClickListener {
             editPlaylistViewModel.editPlaylist()
             findNavController().navigateUp()
-
         }
     }
 

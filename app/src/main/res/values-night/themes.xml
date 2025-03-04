@@ -19,7 +19,14 @@
         <item name="grayWhite">@color/white</item>
     </style>
 
-    <style name="Main">
+      <style name="DialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+          <item name="android:background">@color/blackYP</item>
+          <item name="android:textColorPrimary">@color/white</item>
+          <item name="colorPrimary">@color/blue</item>
+      </style>
+
+
+      <style name="Main">
         <item name="android:background">@color/blackYP</item>
     </style>
 
