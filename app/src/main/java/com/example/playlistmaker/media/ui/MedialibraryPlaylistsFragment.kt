@@ -13,6 +13,7 @@ import com.example.playlistmaker.databinding.FragmentPlaylistsLibraryBinding
 import com.example.playlistmaker.media.domain.model.IntentKeys.PLAYLIST_ID_KEY
 import com.example.playlistmaker.media.domain.model.Playlist
 import com.example.playlistmaker.media.presentation.MedialibraryPlaylistsViewModel
+import com.example.playlistmaker.root.listeners.BottomNavigationListener
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -38,6 +39,8 @@ class MedialibraryPlaylistsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (activity as? BottomNavigationListener)?.toggleBottomNavigationViewVisibility(true)
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)

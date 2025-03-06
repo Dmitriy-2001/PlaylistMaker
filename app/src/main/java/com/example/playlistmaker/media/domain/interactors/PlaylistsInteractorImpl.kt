@@ -1,8 +1,8 @@
 package com.example.playlistmaker.media.domain.interactors
 
 import com.example.playlistmaker.media.domain.model.Playlist
-import com.example.playlistmaker.media.domain.model.Track
 import com.example.playlistmaker.media.domain.repository.PlaylistsRepository
+import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistsInteractorImpl(private val playlistsRepository: PlaylistsRepository) :
@@ -38,5 +38,9 @@ class PlaylistsInteractorImpl(private val playlistsRepository: PlaylistsReposito
 
     override suspend fun removeTrack(playlist: Playlist, trackId: Int) {
         playlistsRepository.removeTrack(playlist, trackId)
+    }
+
+    override suspend fun getPlaylistById(playlistId: Int): Playlist? {
+        return playlistsRepository.getPlaylistById(playlistId)
     }
 }

@@ -15,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.example.playlistmaker.media.domain.model.Track as LibraryTrack
 
 private const val REFRESH_PROGRESS_DELAY = 300L
 
@@ -50,6 +49,12 @@ class PlayerViewModel(
         }
         setOnCompletionListener {
             statePlayerLiveData.postValue(PlayerState.Prepared())
+        }
+        favoriteTracksInteractor.favoriteStateLiveData.observeForever { (id, isFavorite) ->
+            if (track?.trackId == id) {
+                track.isFavorite = isFavorite
+                isFavoriteLiveData.postValue(isFavorite)
+            }
         }
     }
 
@@ -91,7 +96,7 @@ class PlayerViewModel(
             trackInPlaylistLiveData.postValue(TrackInPlaylistState.TrackIsAlreadyInPlaylist(playlist.playlistName))
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                playlistsInteractor.addTracksIdInPlaylist(playlist, tracksId, track.toLibraryTrack())
+                playlistsInteractor.addTracksIdInPlaylist(playlist, tracksId, track)
             }
             trackInPlaylistLiveData.postValue(TrackInPlaylistState.TrackAddToPlaylist(playlist.playlistName))
         }
@@ -157,17 +162,3 @@ class PlayerViewModel(
         release()
     }
 }
-
-fun Track.toLibraryTrack() = LibraryTrack(
-    trackId = this.trackId,
-    trackName = this.trackName ?: "",
-    artistName = this.artistName ?: "",
-    trackTime = this.trackTime,
-    artworkUrl100 = this.artworkUrl100 ?: "",
-    collectionName = this.collectionName ?: "",
-    releaseDate = this.releaseDate ?: "",
-    primaryGenreName = this.primaryGenreName ?: "",
-    country = this.country ?: "",
-    previewUrl = this.previewUrl ?: "",
-    isFavorite = this.isFavorite
-)

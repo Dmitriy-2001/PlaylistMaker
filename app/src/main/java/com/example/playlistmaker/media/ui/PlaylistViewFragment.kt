@@ -19,8 +19,10 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistCollectionBinding
 import com.example.playlistmaker.media.domain.model.IntentKeys.PLAYLIST_ID_KEY
 import com.example.playlistmaker.media.domain.model.Playlist
-import com.example.playlistmaker.media.domain.model.Track
+
 import com.example.playlistmaker.media.presentation.ViewPlaylistViewModel
+import com.example.playlistmaker.root.listeners.BottomNavigationListener
+import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
@@ -40,11 +42,6 @@ class PlaylistViewFragment : Fragment() {
     private val gson: Gson by inject()
     private lateinit var currentPlaylist: String
 
-    companion object {
-        fun newInstance() = PlaylistViewFragment()
-        private const val TAG = "PlaylistViewFragment"
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,6 +53,8 @@ class PlaylistViewFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (activity as? BottomNavigationListener)?.toggleBottomNavigationViewVisibility(false)
 
         binding.overlay.visibility = View.GONE
         val adapter =
@@ -108,6 +107,10 @@ class PlaylistViewFragment : Fragment() {
                 openPlaylist(playlist)
             }
         }
+        viewModel.updatedPlaylistLiveData.observe(viewLifecycleOwner) { updatedPlaylist ->
+            viewModel.getPlaylist(gson.toJson(updatedPlaylist))
+        }
+
         viewModel.trackTimeLiveData.observe(viewLifecycleOwner) {
             binding.tracksTime.text = resources.getQuantityString(R.plurals.minutes, it.toInt(), it)
         }
@@ -115,8 +118,15 @@ class PlaylistViewFragment : Fragment() {
             adapter.replaceTracks(it)
             binding.trackQuantityBottom.text = resources.getQuantityString(R.plurals.tracks, it.size, it.size)
             binding.tracksQty.text = resources.getQuantityString(R.plurals.tracks, it.size, it.size)
-        }
 
+            if (it.isEmpty()) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.empty_playlist_tracks_placeholder_message),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
 
         bottomSheetBehavior = BottomSheetBehavior.from(binding.playlistBottomSheet)
             .apply { state = BottomSheetBehavior.STATE_COLLAPSED }
@@ -129,9 +139,7 @@ class PlaylistViewFragment : Fragment() {
                 }
             }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
         binding.playlistBottomSheet.viewTreeObserver.addOnGlobalLayoutListener(object :
             ViewTreeObserver.OnGlobalLayoutListener {
@@ -176,18 +184,12 @@ class PlaylistViewFragment : Fragment() {
         })
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onResume() {
         super.onResume()
-        val value = arguments?.getString(PLAYLIST_ID_KEY)
-        value?.let {
-            viewModel.getPlaylist(it)
-            currentPlaylist = it
-        }
+        val playlistId = arguments?.getInt(PLAYLIST_ID_KEY) ?: return
+        viewModel.refreshPlaylist(playlistId)
     }
+
 
     private fun sharePlaylist() {
         val message = viewModel.getMessage()
@@ -210,8 +212,6 @@ class PlaylistViewFragment : Fragment() {
         }
         findNavController().navigate(R.id.action_playlistViewFragment_to_playerFragment, bundle)
     }
-
-
 
     private fun openPlaylist(playlist: Playlist) {
         val bundle = Bundle().apply {

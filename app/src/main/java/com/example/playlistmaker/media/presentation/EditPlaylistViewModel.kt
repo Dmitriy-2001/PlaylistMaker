@@ -56,7 +56,6 @@ class EditPlaylistViewModel(
                     tracksCount = tracks.size
                 )
             )
-            // Обновляем данные в ViewPlaylistViewModel
             viewPlaylistViewModel.updatePlaylist(
                 Playlist(
                     playlistId = playlistId,
@@ -80,5 +79,4 @@ class EditPlaylistViewModel(
     override fun setUri(uri: Uri?) {
         this.uri = uri?.toString()
     }
-
 }

@@ -54,6 +54,7 @@
     <string name="word_many_tracks">треков</string>
 
     <string name="dont_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="empty_playlist_tracks_placeholder_message">Вы не добавили ни одного трека</string>
     <string name="edit_playlist">Редактировать</string>
     <string name="save_button_text">Сохранить</string>
     <string name="remove_playlist">Удалить плейлист</string>

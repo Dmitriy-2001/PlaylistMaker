@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.ui
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -23,6 +21,7 @@ import com.example.playlistmaker.player.presentation.PlayerViewModel
 import com.example.playlistmaker.root.listeners.BottomNavigationListener
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -48,7 +47,6 @@ class PlayerFragment : Fragment() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private var playlistAdapter: BottomSheetPlaylistAdapter? = null
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,13 +55,14 @@ class PlayerFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         (activity as? BottomNavigationListener)?.toggleBottomNavigationViewVisibility(false)
 
-        val track: Track? = arguments?.getSerializable(KEY_FOR_PLAYER, Track::class.java)
+        val track: Track? = arguments?.getString(KEY_FOR_PLAYER)?.let {
+            Gson().fromJson(it, Track::class.java)
+        }
         val vModel: PlayerViewModel by viewModel { parametersOf(track) }
         viewModel = vModel
 
@@ -268,9 +267,5 @@ class PlayerFragment : Fragment() {
         viewModel.pause()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        (activity as? BottomNavigationListener)?.toggleBottomNavigationViewVisibility(true)
-    }
+
 }

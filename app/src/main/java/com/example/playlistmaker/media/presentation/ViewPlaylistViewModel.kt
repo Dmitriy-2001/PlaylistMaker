@@ -9,8 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.media.domain.interactors.PlaylistsInteractor
 import com.example.playlistmaker.media.domain.model.Playlist
-import com.example.playlistmaker.media.domain.model.Track
 import com.example.playlistmaker.media.domain.repository.GetPlaylistUseCase
+import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneOffset
@@ -30,7 +31,8 @@ class ViewPlaylistViewModel(
     val trackTimeLiveData: LiveData<Long> = _trackTimeLiveData
     private val _trackListLiveData = MutableLiveData<List<Track>>()
     val trackListLiveData: LiveData<List<Track>> = _trackListLiveData
-
+    private val _updatedPlaylistLiveData = MutableLiveData<Playlist>()
+    val updatedPlaylistLiveData: LiveData<Playlist> get() = _updatedPlaylistLiveData
 
     fun getPlaylist(json: String) {
         val playlist = getPlaylistUseCase.execute(json)
@@ -45,18 +47,31 @@ class ViewPlaylistViewModel(
                         _trackListLiveData.postValue(tracks)
                     }
             }
-
         }
     }
 
     fun updatePlaylist(playlist: Playlist) {
         _playlistLiveData.postValue(playlist)
+        _updatedPlaylistLiveData.postValue(playlist)
         viewModelScope.launch {
             playlistInteractor.getTracksInPlaylist(playlist.tracksIdInPlaylist)
                 .collect { tracks ->
                     _trackTimeLiveData.postValue(TimeUnit.MILLISECONDS.toMinutes(tracks.map { it.trackTime }.sum()))
                     _trackListLiveData.postValue(tracks)
                 }
+        }
+    }
+    fun refreshPlaylist(playlistId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val updatedPlaylist = playlistInteractor.getPlaylistById(playlistId)
+            updatedPlaylist?.let {
+                _playlistLiveData.postValue(it)
+                playlistInteractor.getTracksInPlaylist(it.tracksIdInPlaylist)
+                    .collect { tracks ->
+                        _trackTimeLiveData.postValue(TimeUnit.MILLISECONDS.toMinutes(tracks.sumOf { track -> track.trackTime }))
+                        _trackListLiveData.postValue(tracks)
+                    }
+            }
         }
     }
 
@@ -102,9 +117,5 @@ class ViewPlaylistViewModel(
                 playlistInteractor.removeTrack(it, trackId)
             }
         }
-    }
-
-    private companion object {
-        const val TAG = "ViewPlaylistViewModel"
     }
 }

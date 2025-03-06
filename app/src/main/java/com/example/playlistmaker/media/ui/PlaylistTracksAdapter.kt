@@ -8,7 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.media.domain.model.Track
+import com.example.playlistmaker.search.domain.models.Track
+
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
