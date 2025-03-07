@@ -68,7 +68,7 @@ class ViewPlaylistViewModel(
                 _playlistLiveData.postValue(it)
                 playlistInteractor.getTracksInPlaylist(it.tracksIdInPlaylist)
                     .collect { tracks ->
-                        _trackTimeLiveData.postValue(TimeUnit.MILLISECONDS.toMinutes(tracks.sumOf { track -> track.trackTime }))
+                        _trackTimeLiveData.postValue(TimeUnit.MILLISECONDS.toMinutes(tracks.sumOf { t -> t.trackTime }))
                         _trackListLiveData.postValue(tracks)
                     }
             }

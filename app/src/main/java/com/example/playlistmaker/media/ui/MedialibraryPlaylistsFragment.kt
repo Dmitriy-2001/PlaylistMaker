@@ -92,7 +92,7 @@ class MedialibraryPlaylistsFragment : Fragment() {
     }
     private fun openPlaylist(playlist: Playlist) {
         val bundle = Bundle().apply {
-            putString(PLAYLIST_ID_KEY, gson.toJson(playlist))
+            putInt(PLAYLIST_ID_KEY, playlist.playlistId)
         }
         findNavController().navigate(R.id.action_libraryFragment_to_playlistViewFragment, bundle)
     }
