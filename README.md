@@ -1,6 +1,6 @@
 
 
-<h1 align="center">🎵 Playlist Maker</h1>
+<h1 align="center">🎵 PlaylistMaker</h1>
 <p align="center">
   Android-приложение для создания музыкальных плейлистов с использованием iTunes API.
 </p>
