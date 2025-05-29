@@ -29,6 +29,7 @@ import com.example.playlistmaker.root.listeners.BottomNavigationListener
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.presentation.SearchingViewModel
 import com.example.playlistmaker.search.ui.models.TracksState
+import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -100,6 +101,8 @@ class SearchFragment: Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (activity as? BottomNavigationListener)?.toggleBottomNavigationViewVisibility(true)
 
         inputEditText = binding.inputEditText
         clearButton = binding.clearIcon
@@ -245,7 +248,7 @@ class SearchFragment: Fragment() {
         viewModel.addTrackToHistoryList(track)
 
         val bundle = Bundle().apply {
-            putSerializable(KEY_FOR_PLAYER, track)
+            putString(KEY_FOR_PLAYER, Gson().toJson(track))
         }
 
         findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
@@ -255,7 +258,7 @@ class SearchFragment: Fragment() {
         viewModel.transferTrackToTop(track)
 
         val bundle = Bundle().apply {
-            putSerializable(KEY_FOR_PLAYER, track)
+            putString(KEY_FOR_PLAYER, Gson().toJson(track))
         }
 
         findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)

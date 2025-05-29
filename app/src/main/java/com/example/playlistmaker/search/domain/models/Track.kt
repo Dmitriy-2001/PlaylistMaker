@@ -1,21 +1,23 @@
 package com.example.playlistmaker.search.domain.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
-
+import kotlinx.parcelize.Parcelize
+@Parcelize
 data class Track(
-    val trackId: Int, // ID трека
-    val trackName: String?, // Название композиции
-    val artistName: String?, // Имя исполнителя
-    @SerializedName("trackTimeMillis") val trackTime: String?, // Продолжительность трека в миллисекундах
-    @SerializedName("artworkUrl100") val artworkUrl100: String?, // Ссылка на изображение обложки (Малый)
-    val collectionName: String?, // Название альбома
-    val releaseDate: String?, // Год релиза трека
-    val primaryGenreName: String?, // Жанр трека
-    val country: String?, // Страна исполнителя
-    val previewUrl: String?, // URL отрывка трека
+    val trackId: Int,
+    val trackName: String?,
+    val artistName: String?,
+    @SerializedName("trackTimeMillis") val trackTime: Long,
+    @SerializedName("artworkUrl100") val artworkUrl100: String?,
+    val collectionName: String?,
+    val releaseDate: String?,
+    val primaryGenreName: String?,
+    val country: String?,
+    val previewUrl: String?,
     var isFavorite: Boolean = false
-) : Serializable {
-    val artworkUrl512: String? // Ссылка на изображение обложки (Большой)
-        get() = artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg") // Генерация ссылки на большую обложку
+) : Parcelable {
+    val artworkUrl512: String?
+        get() = artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg")
 }

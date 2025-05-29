@@ -12,8 +12,10 @@ import com.example.playlistmaker.KEY_FOR_PLAYER
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavouritesLibraryBinding
 import com.example.playlistmaker.media.presentation.MedialibraryFavouritesViewModel
+import com.example.playlistmaker.root.listeners.BottomNavigationListener
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.TrackAdapter
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -37,6 +39,8 @@ class MedialibraryFavouritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (activity as? BottomNavigationListener)?.toggleBottomNavigationViewVisibility(true)
 
         setupRecyclerView()
         observeViewModel()
@@ -78,7 +82,7 @@ class MedialibraryFavouritesFragment : Fragment() {
     private fun openAudioPlayer(track: Track) {
         val updatedTrack = track.copy(isFavorite = true) // Убедимся, что поле isFavorite обновлено
         val bundle = Bundle().apply {
-            putSerializable(KEY_FOR_PLAYER, updatedTrack)
+            putString(KEY_FOR_PLAYER, Gson().toJson(updatedTrack))
         }
 
         findNavController().navigate(R.id.action_medialibraryFavouritesFragment_to_playerFragment, bundle)

@@ -50,6 +50,12 @@ class PlayerViewModel(
         setOnCompletionListener {
             statePlayerLiveData.postValue(PlayerState.Prepared())
         }
+        favoriteTracksInteractor.favoriteStateLiveData.observeForever { (id, isFavorite) ->
+            if (track?.trackId == id) {
+                track.isFavorite = isFavorite
+                isFavoriteLiveData.postValue(isFavorite)
+            }
+        }
     }
 
     // Обработка клика по кнопке "Нравится"
@@ -97,6 +103,10 @@ class PlayerViewModel(
     }
 
     private fun setDataSource(url: String?) {
+        if (url.isNullOrEmpty()) {
+            statePlayerLiveData.postValue(PlayerState.Default())
+            return
+        }
         audioPlayerInteractor.setDataSource(url)
     }
 

@@ -24,7 +24,7 @@ class SettingsViewModel(
     }
 
     fun getLinkToCourse(): String {
-        return stringStorageInteractor.getString(R.string.my_mail)
+        return stringStorageInteractor.getString(R.string.share_message)
     }
 
     fun getEmailMessage(): String {

@@ -33,7 +33,7 @@ class FavoriteTracksRepositoryImpl(private val dao: FavoriteTracksDao) : Favorit
                 trackId = track.trackId, // Int
                 trackName = track.trackName ?: "",
                 artistName = track.artistName ?: "",
-                trackTime = track.trackTime ?: "",
+                trackTime = track.trackTime,
                 artworkUrl100 = track.artworkUrl100,
                 collectionName = track.collectionName,
                 releaseDate = track.releaseDate,
@@ -51,7 +51,7 @@ class FavoriteTracksRepositoryImpl(private val dao: FavoriteTracksDao) : Favorit
                 trackId = track.trackId, // Int
                 trackName = track.trackName ?: "",
                 artistName = track.artistName ?: "",
-                trackTime = track.trackTime ?: "",
+                trackTime = track.trackTime,
                 artworkUrl100 = track.artworkUrl100,
                 collectionName = track.collectionName,
                 releaseDate = track.releaseDate,

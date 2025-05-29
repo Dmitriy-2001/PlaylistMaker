@@ -1,6 +1,9 @@
 package com.example.playlistmaker.media.ui
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +15,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -24,6 +28,10 @@ import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NewPlaylistFragment : Fragment() {
+
+    private companion object {
+        private const val TAG = "NewPlaylistFragment"
+    }
 
     private lateinit var toastPlaylistName: String
     private val newPlaylistViewModel by viewModel<NewPlaylistViewModel>()
@@ -83,24 +91,49 @@ class NewPlaylistFragment : Fragment() {
         pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 binding.playlistImage.setImageURI(uri)
-                newPlaylistViewModel.saveImageToLocalStorage(uri)
-                newPlaylistViewModel.setUri(uri)
+                val uriLocal = newPlaylistViewModel.saveImageToLocalStorage(uri)
+                newPlaylistViewModel.setUri(uriLocal)
                 isImageAdd = true
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
         }
 
-        confirmDialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.finish_creating_playlist)
-            .setMessage(R.string.loss_of_unsaved_data)
-            .setNeutralButton(R.string.cancel) { _, _ -> }
-            .setPositiveButton(R.string.finish) { _, _ ->
-                findNavController().navigateUp()
+        val requestPremissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                if (isGranted) {
+                    Log.d(TAG, "Permission Granted")
+                    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                } else {
+                    Log.d(TAG, "No permission")
+                }
             }
+        confirmDialog =
+            MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.finish_creating_playlist)
+                .setMessage(R.string.loss_of_unsaved_data)
+                .setNeutralButton(R.string.cancel) { dialog, which -> }
+                .setPositiveButton(R.string.finish) { dialog, which ->
+                    findNavController().navigateUp()
+                }
+
 
         binding.playlistImage.setOnClickListener {
-            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+//            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val permissionGranted = ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.READ_MEDIA_IMAGES
+                )
+                if (permissionGranted != PackageManager.PERMISSION_GRANTED) {
+                    requestPremissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                } else pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            } else {
+                val permissionGranted = ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+                if (permissionGranted != PackageManager.PERMISSION_GRANTED) {
+                    requestPremissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                } else pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }
         }
 
         binding.back.setOnClickListener {
@@ -134,7 +167,7 @@ class NewPlaylistFragment : Fragment() {
 
     private fun onBackPressed(
         playlistNameEditText: TextInputEditText,
-        playlistDescriptionEditText: TextInputEditText
+        playlistDescriptionEditText: TextInputEditText,
     ) {
         if (isImageAdd || !playlistNameEditText.text.isNullOrBlank() || !playlistDescriptionEditText.text.isNullOrBlank()) {
             confirmDialog.show()
